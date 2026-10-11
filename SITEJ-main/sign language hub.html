@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SITAJ | مركز لغة الإشارة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&family=Tajawal:wght@200;300;400;500;700;800;900&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;900&family=Josefin+Sans:wght@100;200;300;400;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --void:#03060f;
+  --abyss:#060c1e;
+  --deep:#0a1428;
+  --navy:#0f1e3d;
+  --slate:#1a3060;
+  --white:#f0f4ff;
+  --mist:#a8bce0;
+  --fog:#6880a8;
+  --gold:#c8a84a;
+  --gold2:#e8ca78;
+  --gold3:#f5dfa0;
+  --azure:#3d7fff;
+  --azure2:#5b94ff;
+  --sapphire:#1a4fc4;
+  --teal:#00d4b8;
+  --rose:#ff3d6e;
+  --violet:#7c3aed;
+  --amber:#f59e0b;
+  --emerald:#059669;
+  --font-ar:'Cairo','Tajawal',sans-serif;
+  --font-cin:'Cinzel',serif;
+  --font-cind:'Cinzel Decorative',serif;
+  --font-jos:'Josefin Sans',sans-serif;
+  --font-cor:'Cormorant Garamond',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--white);font-family:var(--font-ar);overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+#cur{position:fixed;width:8px;height:8px;background:var(--teal);border-radius:50%;pointer-events:none;z-index:999999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:difference;}
+#curR{position:fixed;width:36px;height:36px;border:1px solid rgba(0,212,184,.5);border-radius:50%;pointer-events:none;z-index:999998;transform:translate(-50%,-50%);transition:all .14s cubic-bezier(.22,1,.36,1);}
+body.hovering #cur{width:20px;height:20px;background:var(--teal);}
+body.hovering #curR{width:60px;height:60px;border-color:rgba(0,212,184,.3);}
+
+/* NOISE */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");opacity:.5;}
+
+/* NAVBAR */
+#NAV{position:fixed;top:0;left:0;right:0;z-index:800;height:68px;padding:0 44px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,6,15,.92);backdrop-filter:blur(28px) saturate(2);border-bottom:1px solid rgba(0,212,184,.12);box-shadow:0 4px 60px rgba(0,0,0,.6);transition:all .5s;}
+.n-logo{font-family:var(--font-cind);font-size:1.35rem;font-weight:700;letter-spacing:5px;background:linear-gradient(135deg,var(--white),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;user-select:none;flex-shrink:0;}
+.n-links{display:flex;gap:32px;list-style:none;}
+.n-links a{font-family:var(--font-ar);font-size:13.5px;font-weight:500;color:var(--fog);text-decoration:none;position:relative;padding-bottom:3px;transition:color .3s;}
+.n-links a::after{content:'';position:absolute;bottom:0;right:0;width:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal));transition:width .35s ease;}
+.n-links a:hover{color:var(--white);}
+.n-links a:hover::after{width:100%;right:auto;left:0;}
+.n-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.n-bell{position:relative;width:42px;height:42px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--teal);font-size:1rem;transition:all .3s;}
+.n-bell:hover{background:rgba(0,212,184,.12);border-color:rgba(0,212,184,.4);transform:translateY(-2px);}
+.n-bell-badge{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#c0274e);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:800;color:#fff;animation:bp 2.5s infinite;}
+@keyframes bp{0%,100%{box-shadow:0 0 0 0 rgba(255,61,110,.5);}50%{box-shadow:0 0 0 6px rgba(255,61,110,0);}}
+.n-burger{width:34px;height:22px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;}
+.n-bline{width:100%;height:2px;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--azure2));transition:all .55s cubic-bezier(.68,-.55,.265,1.55);}
+.n-burger.on .n-bline:nth-child(1){transform:rotate(45deg) translate(7px,7px);background:linear-gradient(90deg,var(--rose),#e0274e);}
+.n-burger.on .n-bline:nth-child(2){opacity:0;transform:translateX(-20px);}
+.n-burger.on .n-bline:nth-child(3){transform:rotate(-45deg) translate(7px,-7px);background:linear-gradient(90deg,var(--rose),#e0274e);}
+
+/* SIDE NAV */
+#OVERLAY{position:fixed;inset:0;z-index:1500;background:rgba(3,6,15,.88);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .45s;}
+#OVERLAY.on{opacity:1;pointer-events:all;}
+#SIDENAV{position:fixed;top:0;right:-460px;width:420px;height:100vh;z-index:1600;background:linear-gradient(170deg,#0d1a35 0%,#080f22 60%,#040810 100%);border-left:1px solid rgba(0,212,184,.14);box-shadow:-30px 0 100px rgba(0,0,0,.7);transition:right .65s cubic-bezier(.68,-.55,.265,1.55);display:flex;flex-direction:column;overflow:hidden;}
+#SIDENAV.on{right:0;}
+.sn-deco{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--teal),var(--azure2),var(--teal),transparent);}
+.sn-body{flex:1;overflow-y:auto;padding:28px 24px 24px;scrollbar-width:thin;scrollbar-color:rgba(0,212,184,.25) transparent;}
+.sn-body::-webkit-scrollbar{width:3px;}
+.sn-body::-webkit-scrollbar-thumb{background:rgba(0,212,184,.25);border-radius:3px;}
+.sn-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:24px;margin-bottom:20px;border-bottom:1px solid rgba(0,212,184,.1);}
+.sn-logo-txt{font-family:var(--font-cind);font-size:1.2rem;letter-spacing:4px;background:linear-gradient(135deg,var(--teal),var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sn-x{width:38px;height:38px;border-radius:50%;background:rgba(255,61,110,.08);border:1px solid rgba(255,61,110,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rose);font-size:1rem;transition:all .3s;flex-shrink:0;}
+.sn-x:hover{background:rgba(255,61,110,.2);transform:rotate(90deg);}
+.sn-profile{display:flex;align-items:center;gap:14px;padding:18px;background:rgba(255,255,255,.03);border:1px solid rgba(0,212,184,.1);border-radius:18px;margin-bottom:20px;text-decoration:none;transition:all .35s;cursor:pointer;}
+.sn-profile:hover{background:rgba(0,212,184,.06);border-color:rgba(0,212,184,.28);transform:translateX(-5px);}
+.sn-av{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#008a78);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;box-shadow:0 0 20px rgba(0,212,184,.3);}
+.sn-info h3{font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:3px;}
+.sn-info p{font-size:.75rem;color:var(--fog);}
+.sn-label{font-family:var(--font-jos);font-size:.55rem;letter-spacing:5px;color:rgba(0,212,184,.3);text-transform:uppercase;padding:14px 6px 8px;margin-top:4px;}
+.sn-ul{list-style:none;}
+.sn-li{margin-bottom:2px;}
+.sn-a{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:13px 14px;text-decoration:none;border-radius:14px;font-size:.92rem;font-weight:600;color:var(--fog);transition:all .3s;position:relative;overflow:hidden;}
+.sn-a::before{content:'';position:absolute;right:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,transparent,rgba(0,212,184,.08));border-radius:14px;transition:width .3s;}
+.sn-a:hover::before{width:100%;}
+.sn-a:hover{color:var(--white);transform:translateX(-5px);}
+.sn-a .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;background:rgba(0,212,184,.08);border:1px solid rgba(0,212,184,.15);color:var(--teal);transition:all .3s;}
+.sn-a:hover .ic{background:rgba(0,212,184,.18);border-color:rgba(0,212,184,.35);transform:scale(1.1);}
+.sn-li.active .sn-a{color:var(--teal);background:rgba(0,212,184,.08);}
+.sn-li.active .sn-a .ic{background:rgba(0,212,184,.15);border-color:rgba(0,212,184,.35);color:var(--teal);}
+.sn-li.out .sn-a{color:rgba(255,100,120,.7);}
+.sn-li.out .sn-a .ic{background:rgba(255,61,110,.08);border-color:rgba(255,61,110,.15);color:var(--rose);}
+.sn-li.out .sn-a:hover{color:var(--rose);}
+.sn-hr{height:1px;background:rgba(255,255,255,.05);margin:12px 0;}
+
+/* PAGE */
+.page{padding-top:68px;min-height:100vh;position:relative;}
+
+/* HERO */
+.hub-hero{
+  position:relative;min-height:52vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:70px 24px 50px;overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;z-index:0;}
+.h-mesh{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 70% 60% at 70% 30%,rgba(0,212,184,.07) 0%,transparent 55%),radial-gradient(ellipse 55% 65% at 25% 80%,rgba(61,127,255,.06) 0%,transparent 55%);pointer-events:none;}
+.h-grid{position:absolute;inset:0;z-index:1;background-image:linear-gradient(rgba(0,212,184,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,184,.022) 1px,transparent 1px);background-size:72px 72px;pointer-events:none;}
+.h-vignette{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 100% 100% at 50% 0%,transparent 40%,rgba(3,6,15,.9) 100%);pointer-events:none;}
+.h-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:1;}
+.h-orb.a{width:600px;height:600px;background:radial-gradient(circle,rgba(0,212,184,.07),transparent 70%);top:-10%;right:-10%;animation:orbA 18s ease-in-out infinite;}
+.h-orb.b{width:400px;height:400px;background:radial-gradient(circle,rgba(61,127,255,.08),transparent 70%);bottom:0;left:-5%;animation:orbB 22s ease-in-out infinite;}
+@keyframes orbA{0%,100%{transform:translate(0,0);}50%{transform:translate(-40px,30px);}}
+@keyframes orbB{0%,100%{transform:translate(0,0);}50%{transform:translate(30px,-35px);}}
+
+/* hand float animation */
+.hand-float{position:absolute;font-size:3.5rem;opacity:.06;animation:handDrift var(--d) ease-in-out infinite var(--del);pointer-events:none;z-index:1;filter:blur(1px);}
+@keyframes handDrift{0%,100%{transform:translateY(0) rotate(var(--r));}50%{transform:translateY(-30px) rotate(calc(var(--r) + 10deg));}}
+
+.hero-badge{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(0,212,184,.28);background:rgba(0,212,184,.04);backdrop-filter:blur(10px);border-radius:50px;padding:9px 26px;font-family:var(--font-jos);font-size:10.5px;letter-spacing:5.5px;color:var(--teal);text-transform:uppercase;margin-bottom:24px;position:relative;z-index:2;animation:fadeU .9s ease both;}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);animation:tealPulse 2s infinite;}
+@keyframes tealPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,212,184,.5);}50%{box-shadow:0 0 0 6px rgba(0,212,184,0);}}
+@keyframes fadeU{from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);}}
+
+.hero-title{font-family:var(--font-ar);font-size:clamp(2.4rem,7vw,5rem);font-weight:900;line-height:1.1;margin-bottom:20px;position:relative;z-index:2;animation:fadeU .95s ease both .1s;}
+.hero-grad{display:block;background:linear-gradient(140deg,#fff 0%,#c0f0e8 30%,var(--teal) 60%,#00a896 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 60px rgba(0,212,184,.25));}
+.hero-sub{display:block;font-size:.34em;font-weight:300;color:rgba(168,188,224,.55);letter-spacing:2px;margin-top:10px;-webkit-text-fill-color:rgba(168,188,224,.55);}
+.hero-desc{font-size:clamp(.95rem,2vw,1.2rem);color:var(--mist);max-width:560px;line-height:2.1;margin:0 auto 36px;font-weight:300;position:relative;z-index:2;animation:fadeU 1s ease both .18s;}
+
+/* HERO STATS */
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2;animation:fadeU 1.1s ease both .3s;}
+.hstat{text-align:center;}
+.hstat-n{font-family:var(--font-ar);font-size:1.8rem;font-weight:900;color:var(--teal);line-height:1;}
+.hstat-l{font-family:var(--font-jos);font-size:9px;letter-spacing:3px;color:var(--fog);text-transform:uppercase;margin-top:4px;}
+.hstat-sep{width:1px;background:rgba(255,255,255,.1);align-self:stretch;}
+
+/* DIVIDER */
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,184,.2),transparent);position:relative;z-index:2;}
+
+/* MARQUEE */
+.marquee-wrap{border-top:1px solid rgba(0,212,184,.1);border-bottom:1px solid rgba(0,212,184,.1);background:rgba(3,6,15,.7);backdrop-filter:blur(10px);padding:15px 0;overflow:hidden;position:relative;z-index:2;}
+.marquee-wrap::before,.marquee-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none;}
+.marquee-wrap::before{left:0;background:linear-gradient(90deg,rgba(3,6,15,.9),transparent);}
+.marquee-wrap::after{right:0;background:linear-gradient(-90deg,rgba(3,6,15,.9),transparent);}
+.mq-track{display:flex;width:max-content;gap:60px;white-space:nowrap;animation:mq 38s linear infinite;}
+.mq-item{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--mist);flex-shrink:0;}
+.mq-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+@keyframes mq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* MAIN CONTAINER */
+.main{max-width:1280px;margin:0 auto;padding:60px 28px;position:relative;z-index:2;}
+.s-tag{font-family:var(--font-jos);font-size:10.5px;letter-spacing:6px;text-transform:uppercase;color:var(--teal);font-weight:300;text-align:center;margin-bottom:14px;}
+.s-title{font-family:var(--font-ar);font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:900;text-align:center;margin-bottom:12px;color:var(--white);}
+.s-desc{text-align:center;color:var(--fog);font-size:15px;max-width:520px;margin:0 auto 48px;line-height:2.1;font-weight:300;}
+
+/* TAB SWITCHER */
+.tab-switcher{display:flex;gap:6px;justify-content:center;margin-bottom:52px;flex-wrap:wrap;}
+.tsw{padding:12px 28px;border-radius:50px;font-family:var(--font-ar);font-size:14px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--fog);transition:all .35s;display:flex;align-items:center;gap:9px;}
+.tsw:hover{background:rgba(255,255,255,.06);color:var(--white);}
+.tsw.on{background:linear-gradient(135deg,rgba(0,212,184,.18),rgba(0,212,184,.06));border-color:rgba(0,212,184,.45);color:var(--teal);box-shadow:0 4px 24px rgba(0,212,184,.15);}
+.tab-panel{display:none;animation:tabIn .45s cubic-bezier(.22,1,.36,1) both;}
+.tab-panel.on{display:block;}
+@keyframes tabIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* ════ ALPHABET TAB ════ */
+.lang-selector{display:flex;gap:10px;justify-content:center;margin-bottom:36px;}
+.lang-btn{padding:10px 24px;border-radius:50px;font-family:var(--font-ar);font-size:13.5px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--fog);transition:all .3s;}
+.lang-btn.on{background:rgba(0,212,184,.14);border-color:rgba(0,212,184,.4);color:var(--teal);}
+
+/* Alphabet poster card */
+.alpha-card{background:linear-gradient(155deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:28px;padding:36px;position:relative;overflow:hidden;transition:all .45s;text-align:center;}
+.alpha-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);}
+.alpha-card:hover{border-color:rgba(0,212,184,.3);box-shadow:0 24px 80px rgba(0,212,184,.1);}
+.alpha-card h3{font-family:var(--font-ar);font-size:1.4rem;font-weight:800;color:var(--white);margin-bottom:24px;}
+.alpha-card h3 span{color:var(--teal);}
+.alpha-img{width:100%;max-width:700px;border-radius:18px;border:1px solid rgba(0,212,184,.15);transition:transform .4s;display:block;margin:0 auto;background:rgba(255,255,255,.02);}
+.alpha-card:hover .alpha-img{transform:scale(1.02);}
+.alpha-placeholder{width:100%;height:420px;border-radius:18px;border:2px dashed rgba(0,212,184,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--fog);background:rgba(0,212,184,.02);}
+.alpha-placeholder i{font-size:3.5rem;color:rgba(0,212,184,.3);}
+.alpha-placeholder p{font-size:14px;line-height:2;}
+
+/* single letter grid */
+.letters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:14px;margin-top:28px;}
+.letter-cell{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .35s;position:relative;overflow:hidden;}
+.letter-cell::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,184,.1),transparent);opacity:0;transition:opacity .3s;}
+.letter-cell:hover{border-color:rgba(0,212,184,.4);transform:translateY(-5px);box-shadow:0 14px 40px rgba(0,212,184,.12);}
+.letter-cell:hover::before{opacity:1;}
+.letter-cell .lc-char{font-size:1.6rem;font-weight:900;color:var(--teal);margin-bottom:6px;display:block;}
+.letter-cell .lc-img-wrap{width:65px;height:65px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.letter-cell .lc-img-wrap img{width:100%;height:100%;object-fit:contain;}
+.letter-cell .lc-img-wrap .lc-emoji{font-size:2rem;}
+.letter-cell .lc-label{font-family:var(--font-jos);font-size:9px;letter-spacing:2px;color:var(--fog);text-transform:uppercase;}
+
+/* MODAL */
+#letterModal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;padding:24px;}
+#letterModal.hidden{display:none;}
+.modal-bg{position:absolute;inset:0;background:rgba(3,6,15,.92);backdrop-filter:blur(20px);}
+.modal-card{position:relative;z-index:1;background:linear-gradient(155deg,rgba(15,30,61,.98),rgba(6,12,26,.98));border:1px solid rgba(0,212,184,.25);border-radius:28px;padding:44px;max-width:420px;width:100%;text-align:center;animation:modalIn .4s cubic-bezier(.22,1,.36,1);}
+@keyframes modalIn{from{opacity:0;transform:scale(.9);}to{opacity:1;transform:scale(1);}}
+.modal-close{position:absolute;top:18px;left:18px;width:36px;height:36px;border-radius:50%;background:rgba(255,61,110,.08);border:1px solid rgba(255,61,110,.2);color:var(--rose);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .3s;}
+.modal-close:hover{background:rgba(255,61,110,.2);transform:rotate(90deg);}
+.modal-char{font-size:5rem;font-weight:900;color:var(--teal);line-height:1;margin-bottom:16px;filter:drop-shadow(0 0 30px rgba(0,212,184,.4));}
+.modal-img-wrap{width:200px;height:200px;margin:0 auto 20px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(0,212,184,.15);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.modal-img-wrap img{width:100%;height:100%;object-fit:contain;}
+.modal-img-wrap .modal-emoji{font-size:5rem;}
+.modal-title{font-family:var(--font-ar);font-size:1.3rem;font-weight:800;color:var(--white);margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--fog);}
+
+/* ════ TRANSLATOR TAB ════ */
+.translator-box{background:linear-gradient(155deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(0,212,184,.15);border-radius:28px;padding:44px;position:relative;overflow:hidden;max-width:900px;margin:0 auto;}
+.translator-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),var(--azure2),var(--teal),transparent);}
+.trans-head{margin-bottom:32px;}
+.trans-head h2{font-family:var(--font-ar);font-size:1.8rem;font-weight:900;color:var(--white);margin-bottom:8px;}
+.trans-head p{color:var(--fog);font-size:14.5px;line-height:2;}
+.textarea-wrap{position:relative;margin-bottom:18px;}
+.trans-textarea{width:100%;padding:20px 24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;color:var(--white);font-family:var(--font-ar);font-size:1.05rem;resize:vertical;outline:none;min-height:130px;transition:all .3s;line-height:2;}
+.trans-textarea:focus{border-color:rgba(0,212,184,.4);background:rgba(0,212,184,.03);box-shadow:0 0 0 3px rgba(0,212,184,.07);}
+.trans-textarea::placeholder{color:var(--fog);}
+.trans-char-count{position:absolute;bottom:14px;left:18px;font-family:var(--font-jos);font-size:10px;letter-spacing:2px;color:var(--fog);}
+.trans-actions{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;}
+.trans-btn{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:50px;font-family:var(--font-ar);font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .35s;position:relative;overflow:hidden;}
+.trans-btn.prime{background:linear-gradient(135deg,var(--teal),#008a78);color:var(--void);box-shadow:0 8px 28px rgba(0,212,184,.3);}
+.trans-btn.prime:hover{box-shadow:0 16px 45px rgba(0,212,184,.5);transform:translateY(-2px);}
+.trans-btn.clear{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--fog);}
+.trans-btn.clear:hover{color:var(--white);background:rgba(255,255,255,.1);}
+
+/* Output */
+.output-wrap{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:28px;min-height:150px;}
+.output-label{font-family:var(--font-jos);font-size:9.5px;letter-spacing:4px;text-transform:uppercase;color:var(--fog);margin-bottom:20px;}
+.signs-row{display:flex;flex-wrap:wrap;gap:16px;align-content:flex-start;}
+.sign-block{text-align:center;transition:transform .3s;}
+.sign-block:hover{transform:translateY(-5px);}
+.sign-block .sign-img-wrap{width:80px;height:80px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(0,212,184,.15);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px;transition:all .3s;}
+.sign-block:hover .sign-img-wrap{border-color:rgba(0,212,184,.4);box-shadow:0 8px 24px rgba(0,212,184,.12);}
+.sign-block .sign-img-wrap img{width:100%;height:100%;object-fit:contain;}
+.sign-block .sign-img-wrap .sign-emoji{font-size:2.2rem;}
+.sign-block .sign-lbl{font-weight:800;font-size:.85rem;color:var(--teal);}
+.sign-space{width:24px;}
+.output-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100px;gap:12px;color:var(--fog);}
+.output-empty i{font-size:2.5rem;opacity:.25;}
+
+/* ════ TIPS TAB ════ */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;}
+.tip-card{background:linear-gradient(155deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:32px;transition:all .4s;position:relative;overflow:hidden;}
+.tip-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .4s;}
+.tip-card.c-teal::before{background:linear-gradient(90deg,transparent,var(--teal),transparent);}
+.tip-card.c-blue::before{background:linear-gradient(90deg,transparent,var(--azure2),transparent);}
+.tip-card.c-gold::before{background:linear-gradient(90deg,transparent,var(--gold2),transparent);}
+.tip-card.c-rose::before{background:linear-gradient(90deg,transparent,var(--rose),transparent);}
+.tip-card:hover{transform:translateY(-7px);}
+.tip-card:hover::before{opacity:1;}
+.tip-card.c-teal:hover{border-color:rgba(0,212,184,.3);box-shadow:0 20px 60px rgba(0,212,184,.1);}
+.tip-card.c-blue:hover{border-color:rgba(61,127,255,.3);box-shadow:0 20px 60px rgba(61,127,255,.1);}
+.tip-card.c-gold:hover{border-color:rgba(200,168,74,.3);box-shadow:0 20px 60px rgba(200,168,74,.08);}
+.tip-card.c-rose:hover{border-color:rgba(255,61,110,.3);box-shadow:0 20px 60px rgba(255,61,110,.08);}
+.tip-icon{font-size:2.5rem;margin-bottom:18px;display:block;}
+.tip-title{font-family:var(--font-ar);font-size:1.2rem;font-weight:800;color:var(--white);margin-bottom:12px;}
+.tip-desc{font-size:14px;line-height:2.1;color:var(--fog);}
+.tip-steps{margin-top:16px;list-style:none;}
+.tip-steps li{font-size:13.5px;color:var(--mist);line-height:2.1;padding-right:18px;position:relative;}
+.tip-steps li::before{content:'◦';position:absolute;right:0;color:var(--teal);font-weight:900;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:60px;}
+.stat-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:28px 16px;text-align:center;transition:all .4s;position:relative;overflow:hidden;}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:0;transition:opacity .4s;}
+.stat-box:hover{background:rgba(0,212,184,.05);border-color:rgba(0,212,184,.2);transform:translateY(-6px);}
+.stat-box:hover::before{opacity:1;}
+.stat-icon{font-size:2rem;margin-bottom:10px;}
+.stat-n{font-family:var(--font-ar);font-size:2.2rem;font-weight:900;color:var(--teal);margin-bottom:5px;line-height:1;}
+.stat-l{font-size:12.5px;color:var(--fog);}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* SCROLL TOP */
+.stb{position:fixed;bottom:30px;left:30px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#008a78);border:none;color:var(--void);font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:500;opacity:0;pointer-events:none;transition:all .35s;box-shadow:0 8px 28px rgba(0,212,184,.4);}
+.stb.show{opacity:1;pointer-events:all;}
+.stb:hover{transform:translateY(-5px);}
+
+@media(max-width:900px){#NAV{padding:0 18px;}.n-links{display:none;}#SIDENAV{width:100%;right:-105%;}.translator-box{padding:28px 20px;}.main{padding:40px 18px;}}
+@media(max-width:480px){.letters-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));}.letter-cell .lc-img-wrap{width:52px;height:52px;}}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="curR"></div>
+
+<!-- OVERLAY -->
+<div id="OVERLAY" onclick="toggleMenu()"></div>
+
+<div class="overlay" id="snOverlay" onclick="snClose()"></div>
+<div class="sidenav" id="snDrawer">
+    <div class="sn-head">
+        <h2>القائمة</h2>
+        <div class="sn-close" onclick="snClose()"><i class="fas fa-times"></i></div>
+    </div>
+
+    <div class="sn-user">
+        <div class="sn-avatar" id="snAvatar">👤</div>
+        <div>
+            <div class="sn-uname" id="snUserName">مرحباً بك</div>
+            <div class="sn-urole" id="snUserRole">زائر</div>
+        </div>
+    </div>
+
+    <ul class="sn-links">
+        <li><a href="index.html"><i class="fas fa-home"></i><span>الصفحة الرئيسية</span></a></li>
+        <li><a href="videos.html"><i class="fas fa-play-circle"></i><span>الفيديوهات</span></a></li>
+        <li><a href="articals.html"><i class="fas fa-feather-alt"></i><span>المقالات</span></a></li>
+        <li><a href="lab.html"><i class="fas fa-comment-dots"></i><span>مختبر العلوم</span></a></li>
+        <li><a href="games.html"><i class="fas fa-chess"></i><span>الألعاب</span></a></li>
+        <li><a href="exams.html"><i class="fas fa-pen-fancy"></i><span>الاختبارات</span></a></li>
+        <li><a href="sign_language_hub.html"><i class="fas fa-hands"></i><span>لغة الإشارة</span></a></li>
+        <li><a href="quraan.html"><i class="fas fa-book-quran"></i><span>اسلاميات</span></a></li>
+        <li><a href="partys.html"><i class="fas fa-microphone-alt"></i><span>الغرف الصوتية</span></a></li>
+        <li><a href="questions.html"><i class="fas fa-comment-dots"></i><span>الاستفسارات</span></a></li>
+        <li><a href="masarat.html"><i class="fa-solid fa-left-right"></i><span>قسم المسارات</span></a></li>
+        <li><a href="family.html"><i class="fas fa-users"></i><span>الرقابة الأبوية</span></a></li>
+        <li><a href="support.html"><i class="fas fa-headset"></i><span>تعريف عن الراعي</span></a></li>
+        <li><a href="marks.html"><i class="fas fa-award"></i><span>النتائج</span></a></li>
+
+        <li id="dashDivider" style="display:none;">
+            <div class="dash-divider"></div>
+            <div class="dash-section-label">لوحات التحكم</div>
+        </li>
+        <li id="teacherDashLink" style="display:none;" class="dash-link-teacher">
+            <a href="Teacher-dashboard.html"><i class="fas fa-chalkboard-teacher"></i><span>لوحة المعلم</span></a>
+        </li>
+        <li id="adminDashLink" style="display:none;" class="dash-link-admin">
+            <a href="Principal-dashboard.html"><i class="fas fa-user-shield"></i><span>لوحة الإدارة</span></a>
+        </li>
+    </ul>
+
+    <div style="margin-top:12px;">
+        <div class="sn-settings-toggle" id="snSettingsToggle" onclick="snToggleSettings()">
+            <span style="display:flex;align-items:center;gap:10px;"><i class="fas fa-sliders-h"></i> الإعدادات</span>
+            <i class="fas fa-chevron-down sn-settings-chevron" id="snChevron"></i>
+        </div>
+        <div class="sn-settings-panel" id="snSettingsPanel">
+            <div class="sn-settings-inner">
+                <div class="sn-s-label"><i class="fas fa-circle-half-stroke"></i> المظهر</div>
+                <div class="sn-theme-row">
+                    <div class="sn-t-opt" id="sn-th-light" onclick="snPickTheme('light')">
+                        <div class="sn-t-preview sn-t-light"></div>
+                        <div class="sn-t-label">فاتح</div>
+                        <div class="sn-t-check"><i class="fas fa-check"></i></div>
+                    </div>
+                    <div class="sn-t-opt" id="sn-th-dark" onclick="snPickTheme('dark')">
+                        <div class="sn-t-preview sn-t-dark"></div>
+                        <div class="sn-t-label">داكن</div>
+                        <div class="sn-t-check"><i class="fas fa-check"></i></div>
+                    </div>
+                </div>
+                <div class="sn-s-label" style="margin-top:14px;"><i class="fas fa-wand-magic-sparkles"></i> الجرافيك</div>
+                <div class="sn-g-row">
+                    <div class="sn-g-opt" id="sn-gr-full" onclick="snPickGraphics('full')"><span class="sn-g-icon">✨</span><div class="sn-g-name">كامل</div><div class="sn-g-chk"><i class="fas fa-check"></i></div></div>
+                    <div class="sn-g-opt" id="sn-gr-reduced" onclick="snPickGraphics('reduced')"><span class="sn-g-icon">🌤</span><div class="sn-g-name">مخفف</div><div class="sn-g-chk"><i class="fas fa-check"></i></div></div>
+                    <div class="sn-g-opt" id="sn-gr-minimal" onclick="snPickGraphics('minimal')"><span class="sn-g-icon">⚡</span><div class="sn-g-name">بسيط</div><div class="sn-g-chk"><i class="fas fa-check"></i></div></div>
+                </div>
+                <div class="sn-s-label" style="margin-top:14px;"><i class="fas fa-text-height"></i> حجم الخط</div>
+                <div>
+                    <input type="range" class="sn-font-slider" id="snFontSlider" min="0" max="3" step="1" value="1" oninput="snFontInput(this.value)">
+                    <div class="sn-font-labels">
+                        <span onclick="snSetFont(0)" data-idx="0">S</span>
+                        <span onclick="snSetFont(1)" data-idx="1">M</span>
+                        <span onclick="snSetFont(2)" data-idx="2">L</span>
+                        <span onclick="snSetFont(3)" data-idx="3">XL</span>
+                    </div>
+                </div>
+                <button class="sn-save-btn" onclick="snSave()">💾 حفظ الإعدادات</button>
+            </div>
+        </div>
+    </div>
+
+    <ul class="sn-links sn-logout" style="margin-top:16px;">
+        <li><a href="#" onclick="snLogout()"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></a></li>
+    </ul>
+</div>
+
+<!-- NAVBAR -->
+<nav id="NAV">
+  <div class="n-logo" onclick="location.href='index.html'">SITAJ</div>
+  <ul class="n-links">
+    <li><a href="index.html">الرئيسية</a></li>
+    <li><a href="exams.html">الاختبارات</a></li>
+    <li><a href="AI.html">المساعد الذكي</a></li>
+  </ul>
+  <div class="n-right">
+    <div class="n-bell"><i class="fas fa-bell"></i><span class="n-bell-badge">3</span></div>
+    <div class="n-burger" id="burger" onclick="toggleMenu()">
+      <div class="n-bline"></div><div class="n-bline"></div><div class="n-bline"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hub-hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="h-mesh"></div><div class="h-grid"></div><div class="h-vignette"></div>
+    <div class="h-orb a"></div><div class="h-orb b"></div>
+    <!-- floating hand emojis -->
+    <div class="hand-float" style="top:15%;right:8%;--d:7s;--del:0s;--r:-10deg">🤟</div>
+    <div class="hand-float" style="top:60%;left:6%;--d:9s;--del:-3s;--r:15deg">🤙</div>
+    <div class="hand-float" style="top:30%;left:15%;--d:11s;--del:-5s;--r:5deg">👋</div>
+    <div class="hand-float" style="top:75%;right:12%;--d:8s;--del:-1s;--r:-20deg">🖐️</div>
+    <div class="hand-float" style="top:50%;right:20%;--d:13s;--del:-7s;--r:8deg">✌️</div>
+
+    <div class="hero-badge">✦ مركز لغة الإشارة ✦</div>
+    <h1 class="hero-title">
+      <span class="hero-grad">تعلّم لغة الإشارة</span>
+      <span class="hero-sub">التعليم الشامل · لا يُستثنى أحد · الأبجدية والمترجم</span>
+    </h1>
+    <p class="hero-desc">منصة متكاملة لتعلّم لغة الإشارة العربية والإنجليزية — أبجدية تفاعلية، مترجم فوري، ونصائح للمبتدئين</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-n">28</div><div class="hstat-l">حرف عربي</div></div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><div class="hstat-n">26</div><div class="hstat-l">حرف إنجليزي</div></div>
+      <div class="hstat-sep"></div>
+      <div class="hstat"><div class="hstat-n">∞</div><div class="hstat-l">ترجمة فورية</div></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="mq-track">
+      <div class="mq-item"><span class="mq-dot"></span>لغة الإشارة جسر بين العالمين 🤟</div>
+      <div class="mq-item"><span class="mq-dot"></span>التعليم حق للجميع بلا استثناء</div>
+      <div class="mq-item"><span class="mq-dot"></span>Sign Language · تواصل بلا حدود</div>
+      <div class="mq-item"><span class="mq-dot"></span>كل حركة يد تحمل كلمة وكلمة تحمل عالماً</div>
+      <div class="mq-item"><span class="mq-dot"></span>Learn To Connect · تعلّم لتتواصل</div>
+      <div class="mq-item"><span class="mq-dot"></span>لغة الإشارة جسر بين العالمين 🤟</div>
+      <div class="mq-item"><span class="mq-dot"></span>التعليم حق للجميع بلا استثناء</div>
+      <div class="mq-item"><span class="mq-dot"></span>Sign Language · تواصل بلا حدود</div>
+      <div class="mq-item"><span class="mq-dot"></span>كل حركة يد تحمل كلمة وكلمة تحمل عالماً</div>
+      <div class="mq-item"><span class="mq-dot"></span>Learn To Connect · تعلّم لتتواصل</div>
+    </div>
+  </div>
+  <div class="divider"></div>
+
+  <div class="main">
+
+    <!-- STATS -->
+    <div class="stats-row reveal">
+      <div class="stat-box"><div class="stat-icon">🤟</div><div class="stat-n">54</div><div class="stat-l">حرف إشارة</div></div>
+      <div class="stat-box"><div class="stat-icon">🌍</div><div class="stat-n">2</div><div class="stat-l">لغة إشارة</div></div>
+      <div class="stat-box"><div class="stat-icon">⚡</div><div class="stat-n">فوري</div><div class="stat-l">ترجمة لحظية</div></div>
+      <div class="stat-box"><div class="stat-icon">🎓</div><div class="stat-n">مجاني</div><div class="stat-l">للجميع دائماً</div></div>
+      <div class="stat-box"><div class="stat-icon">♿</div><div class="stat-n">شامل</div><div class="stat-l">بلا استثناء</div></div>
+    </div>
+
+    <!-- TAB SWITCHER -->
+    <div class="tab-switcher">
+      <button class="tsw on" onclick="switchTab('alpha',this)"><i class="fas fa-spell-check"></i> الأبجدية</button>
+      <button class="tsw" onclick="switchTab('trans',this)"><i class="fas fa-language"></i> المترجم الفوري</button>
+      <button class="tsw" onclick="switchTab('tips',this)"><i class="fas fa-lightbulb"></i> نصائح المبتدئين</button>
+    </div>
+
+    <!-- ══ ALPHABET TAB ══ -->
+    <div class="tab-panel on reveal" id="tab-alpha">
+      <div class="s-tag">✦ تعلّم الحروف</div>
+      <h2 class="s-title">الأبجدية التفاعلية</h2>
+      <p class="s-desc">اضغط على أي حرف لرؤية إشارته بشكل موسّع</p>
+
+      <div class="lang-selector">
+        <button class="lang-btn on" onclick="setAlphaLang('ar',this)">🇯🇴 العربية</button>
+        <button class="lang-btn" onclick="setAlphaLang('en',this)">🇺🇸 الإنجليزية</button>
+        <button class="lang-btn" onclick="setAlphaLang('poster',this)">🖼️ الملصق الكامل</button>
+      </div>
+
+      <!-- Poster view -->
+      <div id="posterView">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div class="alpha-card">
+            <h3>لغة الإشارة <span>العربية</span></h3>
+            <img src="Arabic_SL.png" alt="لغة الإشارة العربية" class="alpha-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="alpha-placeholder" style="display:none;">
+              <i class="fas fa-hands"></i>
+              <p>صورة الأبجدية العربية<br><small style="opacity:.6">(Arabic_SL.png)</small></p>
+            </div>
+          </div>
+          <div class="alpha-card">
+            <h3>لغة الإشارة <span>الإنجليزية</span></h3>
+            <img src="English_SL.png" alt="English Sign Language" class="alpha-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="alpha-placeholder" style="display:none;">
+              <i class="fas fa-hands"></i>
+              <p>صورة الأبجدية الإنجليزية<br><small style="opacity:.6">(English_SL.png)</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive grid -->
+      <div id="gridView" style="display:none;">
+        <div class="letters-grid" id="lettersGrid"></div>
+      </div>
+    </div>
+
+    <!-- ══ TRANSLATOR TAB ══ -->
+    <div class="tab-panel reveal" id="tab-trans">
+      <div class="translator-box">
+        <div class="trans-head">
+          <h2>🤟 المترجم الفوري</h2>
+          <p>اكتب نصًا بالعربية أو الإنجليزية وسيظهر لك مقابله بلغة الإشارة حرفًا بحرف</p>
+        </div>
+
+        <div class="textarea-wrap">
+          <textarea class="trans-textarea" id="inputText" placeholder="اكتب نصك هنا... مثال: مرحبا Hello" rows="4" oninput="updateCharCount()"></textarea>
+          <span class="trans-char-count" id="charCount">0 حرف</span>
+        </div>
+
+        <div class="trans-actions">
+          <button class="trans-btn prime" onclick="translateText()"><i class="fas fa-language"></i> ترجمة فورية</button>
+          <button class="trans-btn clear" onclick="clearTranslator()"><i class="fas fa-times"></i> مسح</button>
+        </div>
+
+        <div class="output-wrap">
+          <div class="output-label">نتيجة الترجمة // TRANSLATION OUTPUT</div>
+          <div id="signsOutput">
+            <div class="output-empty"><i class="fas fa-hands"></i><span style="font-size:14px;color:var(--fog)">اكتب نصاً وانقر «ترجمة فورية»</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TIPS TAB ══ -->
+    <div class="tab-panel reveal" id="tab-tips">
+      <div class="s-tag">✦ للمبتدئين</div>
+      <h2 class="s-title">دليل البداية الصحيحة</h2>
+      <p class="s-desc">نصائح ذهبية لمن يبدأ رحلته مع لغة الإشارة</p>
+      <div class="tips-grid">
+        <div class="tip-card c-teal">
+          <span class="tip-icon">🎯</span>
+          <div class="tip-title">ابدأ بالأبجدية</div>
+          <div class="tip-desc">الخطوة الأولى دائمًا هي إتقان أبجدية لغة الإشارة — فهي أساس كل شيء.</div>
+          <ul class="tip-steps">
+            <li>تعلّم 3-4 حروف يوميًا فقط</li>
+            <li>كرّر أمام المرآة لترى شكل يدك</li>
+            <li>ربط كل حرف بكلمة تبدأ به</li>
+            <li>راجع كل أسبوع ما تعلّمته</li>
+          </ul>
+        </div>
+        <div class="tip-card c-blue">
+          <span class="tip-icon">🪞</span>
+          <div class="tip-title">الممارسة أمام المرآة</div>
+          <div class="tip-desc">المرآة أفضل معلم — ترى يدك كما يراها الآخرون وتصحح أخطاءك فورًا.</div>
+          <ul class="tip-steps">
+            <li>خصّص 15 دقيقة يوميًا للتمرين</li>
+            <li>سجّل نفسك وراجع الفيديو</li>
+            <li>ركّز على وضوح الحرف لا سرعته</li>
+          </ul>
+        </div>
+        <div class="tip-card c-gold">
+          <span class="tip-icon">🤝</span>
+          <div class="tip-title">التواصل مع المجتمع</div>
+          <div class="tip-desc">التواصل الفعلي مع الصم وضعاف السمع يُسرّع تعلّمك بشكل لا يصدق.</div>
+          <ul class="tip-steps">
+            <li>انضم لمجموعات لغة الإشارة</li>
+            <li>شاهد فيديوهات ناطقين أصليين</li>
+            <li>تطوّع في مراكز الصم</li>
+          </ul>
+        </div>
+        <div class="tip-card c-rose">
+          <span class="tip-icon">🧠</span>
+          <div class="tip-title">الثبات والصبر</div>
+          <div class="tip-desc">لغة الإشارة مثل أي لغة أخرى — تحتاج وقتًا وصبرًا وممارسة مستمرة.</div>
+          <ul class="tip-steps">
+            <li>لا تقارن تقدمك بغيرك</li>
+            <li>احتفل بكل حرف تتقنه</li>
+            <li>الاستمرارية أهم من الكمية</li>
+            <li>تذكّر: لغة جديدة = حياة جديدة</li>
+          </ul>
+        </div>
+        <div class="tip-card c-teal">
+          <span class="tip-icon">📱</span>
+          <div class="tip-title">استخدم أدوات سيتاج</div>
+          <div class="tip-desc">منصة سيتاج توفر لك كل ما تحتاج لتعلّم لغة الإشارة في مكان واحد.</div>
+          <ul class="tip-steps">
+            <li>استخدم المترجم يوميًا للتدرّب</li>
+            <li>راجع الأبجدية التفاعلية</li>
+            <li>اطرح أسئلتك في قسم الاستفسارات</li>
+          </ul>
+        </div>
+        <div class="tip-card c-blue">
+          <span class="tip-icon">🌍</span>
+          <div class="tip-title">اعرف الفرق بين اللغتين</div>
+          <div class="tip-desc">لغة الإشارة العربية تختلف عن الإنجليزية — كلتاهما مهمة وجميلة.</div>
+          <ul class="tip-steps">
+            <li>العربية: 28 حرف بأشكال خاصة</li>
+            <li>الإنجليزية: 26 حرف أبسط نسبيًا</li>
+            <li>تعلّم الاثنتين للتواصل الأوسع</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page -->
+
+<!-- LETTER MODAL -->
+<div id="letterModal" class="hidden">
+  <div class="modal-bg" onclick="closeModal()"></div>
+  <div class="modal-card">
+    <div class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></div>
+    <div class="modal-char" id="modalChar">أ</div>
+    <div class="modal-img-wrap" id="modalImgWrap">
+      <span class="modal-emoji">🤟</span>
+    </div>
+    <div class="modal-title" id="modalTitle">الحرف</div>
+    <div class="modal-sub" id="modalSub">لغة الإشارة</div>
+  </div>
+</div>
+
+<button class="stb" id="stb" onclick="scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<script>
+/* ─── CURSOR ─── */
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function raf(){requestAnimationFrame(raf);rx+=(mx-rx)*.13;ry+=(my-ry)*.13;curR.style.left=rx+'px';curR.style.top=ry+'px';})();
+document.querySelectorAll('a,button,.letter-cell,.sign-block,.tip-card,.sn-a').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+/* ─── HERO CANVAS ─── */
+(()=>{
+  const c=document.getElementById('heroCanvas'),ctx=c.getContext('2d');
+  function resize(){c.width=c.offsetWidth;c.height=c.offsetHeight;}
+  resize();addEventListener('resize',resize);
+  const pts=Array.from({length:55},()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:.4+Math.random()*1.4,a:.05+Math.random()*.18,ph:Math.random()*Math.PI*2}));
+  let fr=0;
+  (function loop(){requestAnimationFrame(loop);fr++;ctx.clearRect(0,0,c.width,c.height);
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>c.width)p.vx*=-1;if(p.y<0||p.y>c.height)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,212,184,${p.a*(0.5+0.5*Math.sin(fr*.012+p.ph))})`;ctx.fill();
+    });
+    ctx.strokeStyle=`rgba(0,212,184,${.012+.005*Math.sin(fr*.008)})`;ctx.lineWidth=1;
+    for(let x=0;x<c.width;x+=72){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();}
+    for(let y=0;y<c.height;y+=72){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke();}
+  })();
+})();
+
+/* ─── NAV ─── */
+window.addEventListener('scroll',()=>{document.getElementById('stb').classList.toggle('show',scrollY>300);},{passive:true});
+function toggleMenu(){
+  const sn=document.getElementById('SIDENAV'),ov=document.getElementById('OVERLAY'),bg=document.getElementById('burger');
+  sn.classList.toggle('on');ov.classList.toggle('on');bg.classList.toggle('on');
+  document.body.style.overflow=sn.classList.contains('on')?'hidden':'';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();if(document.getElementById('SIDENAV').classList.contains('on'))toggleMenu();}});
+function doLogout(){if(confirm('تسجيل الخروج؟')){localStorage.removeItem('eliteUser');location.href='index.html';}}
+
+/* ─── REVEAL ─── */
+const io=new IntersectionObserver(ee=>ee.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.05});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ─── TABS ─── */
+function switchTab(t,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tsw').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+t).classList.add('on');
+  btn.classList.add('on');
+}
+
+/* ─── ALPHABET ─── */
+const AR_LETTERS=['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي'];
+const EN_LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+let currentLang='ar';
+
+function setAlphaLang(lang,btn){
+  currentLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(lang==='poster'){
+    document.getElementById('posterView').style.display='';
+    document.getElementById('gridView').style.display='none';
+  } else {
+    document.getElementById('posterView').style.display='none';
+    document.getElementById('gridView').style.display='';
+    renderGrid(lang==='ar'?AR_LETTERS:EN_LETTERS,lang);
+  }
+}
+
+function renderGrid(letters,lang){
+  const grid=document.getElementById('lettersGrid');
+  grid.innerHTML=letters.map(l=>{
+    const src=lang==='ar'?`${l}.jpg`:`${l}.jpg`;
+    return `<div class="letter-cell" onclick="openModal('${l}','${lang}')">
+      <div class="lc-img-wrap">
+        <img src="${src}" alt="${l}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <span class="lc-emoji" style="display:none;">🤟</span>
+      </div>
+      <span class="lc-char">${l}</span>
+      <span class="lc-label">${lang==='ar'?'عربي':'ENGLISH'}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ─── MODAL ─── */
+function openModal(char,lang){
+  const modal=document.getElementById('letterModal');
+  document.getElementById('modalChar').textContent=char;
+  document.getElementById('modalTitle').textContent=`الحرف "${char}"`;
+  document.getElementById('modalSub').textContent=lang==='ar'?'لغة الإشارة العربية':'English Sign Language';
+  const wrap=document.getElementById('modalImgWrap');
+  wrap.innerHTML=`<img src="${char}.jpg" alt="${char}" style="width:100%;height:100%;object-fit:contain;"
+    onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('beforeend','<span class=\\'modal-emoji\\'>🤟</span>')">`;
+  modal.classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('letterModal').classList.add('hidden');
+  document.body.style.overflow='';
+}
+
+/* ─── TRANSLATOR ─── */
+function updateCharCount(){
+  const v=document.getElementById('inputText').value;
+  document.getElementById('charCount').textContent=v.length+' حرف';
+}
+
+function translateText(){
+  const text=document.getElementById('inputText').value;
+  const out=document.getElementById('signsOutput');
+  out.innerHTML='';
+  if(!text.trim()){
+    out.innerHTML='<div class="output-empty"><i class="fas fa-hands"></i><span style="font-size:14px;color:var(--fog)">يرجى كتابة نص أولاً</span></div>';
+    return;
+  }
+  const row=document.createElement('div');row.className='signs-row';
+  let valid=0;
+  for(let ch of text){
+    if(ch===' '){const sp=document.createElement('div');sp.className='sign-space';row.appendChild(sp);continue;}
+    let src='',lbl='';
+    if(/[\u0600-\u06FF]/.test(ch)){
+      if(/[\u064B-\u065F\u0670]/.test(ch))continue;
+      let mapped=ch;
+      if('إأآا'.includes(ch))mapped='ا';
+      src=`${mapped}.jpg`;lbl=ch;
+    } else if(/[a-zA-Z]/.test(ch)){
+      const up=ch.toUpperCase();src=`${up}.jpg`;lbl=up;
+    } else continue;
+    const block=document.createElement('div');block.className='sign-block';
+    block.innerHTML=`<div class="sign-img-wrap">
+      <img src="${src}" alt="${lbl}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <span class="sign-emoji" style="display:none;font-size:2.2rem;">🤟</span>
+    </div><div class="sign-lbl">${lbl}</div>`;
+    row.appendChild(block);valid++;
+  }
+  if(valid===0){
+    out.innerHTML='<div class="output-empty"><i class="fas fa-info-circle"></i><span style="font-size:14px;color:var(--fog)">لم يتم العثور على حروف قابلة للترجمة</span></div>';
+  } else {
+    out.appendChild(row);
+  }
+  // Add hover cursor
+  out.querySelectorAll('.sign-block').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+  });
+}
+
+function clearTranslator(){
+  document.getElementById('inputText').value='';
+  document.getElementById('charCount').textContent='0 حرف';
+  document.getElementById('signsOutput').innerHTML='<div class="output-empty"><i class="fas fa-hands"></i><span style="font-size:14px;color:var(--fog)">اكتب نصاً وانقر «ترجمة فورية»</span></div>';
+}
+
+// Enter key = translate
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('inputText').addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();translateText();}
+  });
+});
+
+/* ─── USER ─── */
+const u=localStorage.getItem('eliteUser');
+if(u)document.getElementById('sideUser').textContent=u;
+</script>
+</body>
+</html>

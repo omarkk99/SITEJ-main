@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>تسجيل الدخول | SITEJ - منصة الكادر التعليمي</title>
+
+    <!-- إذا المستخدم مسجل دخول أصلاً، حوّله للرئيسية -->
+    <script>
+    if (localStorage.getItem('userRole') || localStorage.getItem('userUid')) {
+        window.location.replace('index.html');
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --navy-dark: #1a2942;
+            --navy-lighter: #3d5a7f;
+            --accent-blue: #4a90e2;
+            --accent-light-blue: #6fa8ec;
+            --accent-sky: #87ceeb;
+            --accent-teal: #20c997;
+            --accent-purple: #8b5cf6;
+            --gradient-navy-soft: linear-gradient(135deg, #1a2942 0%, #3d5a7f 50%, #b8c9dc 100%);
+            --gradient-blue-glow: linear-gradient(135deg, #4a90e2 0%, #6fa8ec 50%, #87ceeb 100%);
+            --gradient-student: linear-gradient(135deg, #20c997 0%, #4a90e2 100%);
+            --gradient-register: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #4a90e2 100%);
+            --border-blue: rgba(74, 144, 226, 0.3);
+            --shadow-blue: rgba(74, 144, 226, 0.2);
+            --text-navy: #0a1628;
+            --text-gray: #6b7c93;
+            --red: #ee5a6f;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 8%, #e8eef5 20%, #d4dfe9 35%, #b8c9dc 50%, #9bb4d0 65%, #7a9ac2 80%, #5a7fa8 90%, #3d5a7f 95%, #1a2942 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; }
+        .bg-shape { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12; animation: float 30s infinite ease-in-out; }
+        .shape-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(74,144,226,0.4) 0%, transparent 70%); top: -200px; right: -200px; }
+        .shape-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(26,41,66,0.3) 0%, transparent 70%); bottom: -150px; left: -150px; animation-delay: -10s; }
+        .shape-3 { width: 450px; height: 450px; background: radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%); top: 35%; left: 45%; animation-delay: -20s; }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -100px) scale(1.1); }
+            50% { transform: translate(-50px, 50px) scale(0.9); }
+            75% { transform: translate(-120px, -80px) scale(1.05); }
+        }
+        nav.top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 22px 70px; position: fixed; width: 100%; top: 0; z-index: 1000;
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(30px);
+            border-bottom: 1px solid var(--border-blue); transition: all 0.5s;
+        }
+        nav.top-bar.scrolled { padding: 14px 70px; background: rgba(248,249,250,0.95); border-bottom: 2px solid var(--accent-blue); }
+        .logo-container { display: flex; align-items: center; gap: 18px; cursor: pointer; text-decoration: none; }
+        .logo-icon { width: 55px; height: 55px; background: var(--gradient-blue-glow); border-radius: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px var(--shadow-blue); transition: transform 0.15s; }
+        .logo-icon i { font-size: 1.6rem; color: #fff; }
+        .logo-text .logo { font-size: 1.9rem; font-weight: 900; background: var(--gradient-navy-soft); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-tagline { font-size: 0.75rem; color: var(--text-gray); }
+        .nav-actions { display: flex; align-items: center; gap: 14px; }
+        .lang-btn { display: flex; align-items: center; gap: 7px; padding: 9px 18px; background: rgba(255,255,255,0.85); border: 1.5px solid var(--border-blue); border-radius: 50px; color: var(--text-navy); font-weight: 700; cursor: pointer; transition: all 0.3s; font-family: inherit; font-size: 0.88rem; }
+        .lang-btn:hover { background: var(--gradient-blue-glow); color: white; border-color: transparent; }
+        .lang-btn i { font-size: 1rem; }
+        .page-body { position: relative; z-index: 10; width: 100%; padding: 120px 20px 60px; display: flex; justify-content: center; }
+        .login-card { width: 100%; max-width: 520px; background: rgba(255,255,255,0.95); border: 2px solid var(--border-blue); border-radius: 28px; padding: 0 0 38px; box-shadow: 0 24px 70px rgba(26,41,66,0.18); position: relative; overflow: hidden; }
+        .login-tabs { display: flex; border-bottom: 2px solid var(--border-blue); position: relative; }
+        .tab-btn { flex: 1; padding: 18px 6px 15px; background: transparent; border: none; cursor: pointer; font-weight: 700; color: var(--text-gray); display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.3s; font-family: inherit; font-size: 0.95rem; }
+        .tab-btn.active { color: var(--accent-blue); }
+        .tab-indicator { position: absolute; bottom: -2px; height: 3px; background: var(--gradient-blue-glow); border-radius: 3px 3px 0 0; transition: all 0.4s; width: 50%; right: 0%; }
+        .tab-content { padding: 30px 44px 0; display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-head { text-align: center; margin-bottom: 22px; }
+        .card-icon { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 12px 35px var(--shadow-blue); }
+        .card-icon.staff-icon { background: var(--gradient-blue-glow); }
+        .card-icon.student-icon { background: var(--gradient-student); }
+        .card-icon i { font-size: 1.8rem; color: white; }
+        .card-title { font-size: 1.7rem; font-weight: 900; background: var(--gradient-navy-soft); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-sub { color: var(--text-gray); font-size: 0.88rem; }
+        .beta-bar, .student-badge { background: rgba(74,144,226,0.08); border: 1px solid var(--border-blue); border-radius: 14px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.83rem; display: flex; align-items: center; gap: 10px; }
+        .student-badge i { color: #20c997; }
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-weight: 700; font-size: 0.86rem; margin-bottom: 7px; }
+        .field-wrap { position: relative; }
+        .field-wrap .field-icon { position: absolute; top: 50%; transform: translateY(-50%); right: 16px; color: var(--text-gray); }
+        .field-wrap .toggle-pass { position: absolute; top: 50%; transform: translateY(-50%); left: 16px; background: none; border: none; cursor: pointer; color: var(--text-gray); }
+        .field input { width: 100%; padding: 13px 44px; background: rgba(255,255,255,0.7); border: 2px solid var(--border-blue); border-radius: 14px; font-family: inherit; font-size: 0.97rem; outline: none; transition: all 0.3s; }
+        .field input:focus { border-color: var(--accent-blue); background: white; box-shadow: 0 0 0 4px rgba(74,144,226,0.1); }
+        .btn-main { width: 100%; padding: 15px; border: none; border-radius: 14px; color: white; font-weight: 800; cursor: pointer; transition: all 0.4s; margin-top: 6px; font-family: inherit; font-size: 1rem; }
+        .btn-main.btn-staff { background: var(--gradient-blue-glow); }
+        .btn-main.btn-student { background: var(--gradient-student); }
+        .btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
+        .forgot-row { text-align: left; margin-top: -2px; margin-bottom: 10px; }
+        .forgot-row span { font-size: 0.81rem; color: var(--text-gray); cursor: pointer; }
+        .switch-link { text-align: center; margin-top: 14px; font-size: 0.84rem; }
+        .switch-link a { color: var(--accent-blue); font-weight: 700; cursor: pointer; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(26,41,66,0.7); backdrop-filter: blur(8px); z-index: 5000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.35s; padding: 20px; }
+        .modal-overlay.show { opacity: 1; pointer-events: all; }
+        .modal-box { width: 100%; max-width: 550px; max-height: 90vh; background: rgba(255,255,255,0.98); border: 2px solid var(--border-blue); border-radius: 28px; overflow: hidden; transform: translateY(30px) scale(0.96); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 30px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
+        .modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
+        .modal-header { background: var(--gradient-register); padding: 24px 20px; text-align: center; position: relative; flex-shrink: 0; }
+        .modal-header h2 { color: white; font-size: 1.6rem; margin: 0; font-weight: 800; }
+        .modal-header .modal-close { position: absolute; top: 18px; left: 20px; background: rgba(255,255,255,0.2); border: none; width: 38px; height: 38px; border-radius: 50%; color: white; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .modal-header .modal-close:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
+        .modal-body { flex: 1; overflow-y: auto; padding: 28px 32px 32px; }
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 10px; }
+        .register-badge { background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(74,144,226,0.05)); border: 1.5px solid rgba(139,92,246,0.2); border-radius: 14px; padding: 12px 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-navy); }
+        .register-badge i { color: #8b5cf6; font-size: 1.1rem; }
+        .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .register-field { margin-bottom: 16px; }
+        .register-field label { display: block; font-weight: 700; font-size: 0.86rem; margin-bottom: 8px; color: var(--text-navy); }
+        .register-field input, .register-field select { width: 100%; padding: 12px 42px 12px 16px; background: rgba(255,255,255,0.9); border: 2px solid var(--border-blue); border-radius: 14px; font-family: inherit; font-size: 0.95rem; outline: none; transition: all 0.3s; }
+        .register-field input:focus, .register-field select:focus { border-color: #8b5cf6; box-shadow: 0 0 0 4px rgba(139,92,246,0.1); background: white; }
+        .register-field .field-wrap { position: relative; }
+        .register-field .field-icon { position: absolute; top: 50%; transform: translateY(-50%); right: 14px; color: var(--text-gray); }
+        .register-field .toggle-pass { position: absolute; top: 50%; transform: translateY(-50%); left: 14px; background: none; border: none; cursor: pointer; color: var(--text-gray); }
+        .field-hint { margin-top: 6px; font-size: 0.76rem; color: var(--text-gray); }
+        .btn-register-modal { width: 100%; padding: 14px; background: var(--gradient-register); border: none; border-radius: 14px; color: white; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: all 0.3s; font-family: inherit; }
+        .btn-register-modal:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139,92,246,0.3); }
+        .btn-register-modal:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .success-state { text-align: center; padding: 30px 0; }
+        .success-icon { width: 80px; height: 80px; background: var(--gradient-student); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .success-icon i { font-size: 2.2rem; color: white; }
+        .success-state h3 { font-size: 1.4rem; margin: 15px 0 10px; color: var(--text-navy); }
+        .success-state p { color: var(--text-gray); margin-bottom: 10px; }
+        .sn-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: linear-gradient(135deg, var(--navy-dark), var(--navy-lighter)); color: white; padding: 12px 26px; border-radius: 50px; font-size: 0.88rem; font-weight: 600; opacity: 0; pointer-events: none; z-index: 10000; transition: all 0.3s; text-align: center; max-width: 90vw; }
+        .sn-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .sidenav { position: fixed; top: 0; right: -400px; width: 350px; height: 100%; background: white; z-index: 3000; padding: 30px 24px; transition: right 0.4s; box-shadow: -5px 0 30px rgba(0,0,0,0.1); }
+        .sidenav.show { right: 0; }
+        .burger { cursor: pointer; width: 36px; height: 28px; display: flex; flex-direction: column; justify-content: space-between; }
+        .bline { height: 3px; background: var(--accent-blue); border-radius: 4px; transition: 0.3s; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 2500; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .overlay.show { opacity: 1; pointer-events: all; }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-left: 6px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .pass-strength { margin-top: 8px; }
+        .strength-bar { height: 5px; border-radius: 4px; background: #e8eef5; overflow: hidden; margin-bottom: 5px; }
+        .strength-fill { height: 100%; border-radius: 4px; width: 0%; transition: all 0.4s; }
+        .strength-fill.weak { width: 33%; background: linear-gradient(90deg, #ee5a6f, #f093a3); }
+        .strength-fill.medium { width: 66%; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .strength-fill.strong { width: 100%; background: linear-gradient(90deg, #20c997, #4a90e2); }
+        .strength-text { font-size: 0.76rem; font-weight: 600; color: var(--text-gray); }
+        .strength-text.weak { color: #ee5a6f; }
+        .strength-text.medium { color: #f59e0b; }
+        .strength-text.strong { color: #20c997; }
+        .teacher-section { display: none; background: rgba(74,144,226,0.05); border: 1.5px solid rgba(74,144,226,0.2); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+        .teacher-section.visible { display: block; animation: fadeIn 0.3s ease; }
+        .teacher-section-title { font-weight: 800; font-size: 0.85rem; color: var(--navy-dark); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+        .teacher-section-title i { color: var(--accent-blue); }
+        .class-picker-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 10px; }
+        .class-picker-row select { width: 100%; padding: 10px 14px; background: white; border: 2px solid var(--border-blue); border-radius: 12px; font-family: inherit; font-size: 0.9rem; outline: none; transition: all 0.3s; }
+        .add-class-btn { padding: 10px 14px; background: var(--gradient-blue-glow); color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; transition: all 0.3s; }
+        .classes-tags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 10px; }
+        .class-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--gradient-blue-glow); color: white; padding: 5px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+        .class-tag button { background: none; border: none; color: white; cursor: pointer; font-size: 0.75rem; }
+        .no-classes-hint { font-size: 0.78rem; color: var(--text-gray); font-style: italic; }
+        .secret-overlay { position: fixed; inset: 0; background: rgba(26,41,66,0.65); backdrop-filter: blur(10px); z-index: 99999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; }
+        .secret-overlay.show { opacity: 1; pointer-events: all; }
+        .secret-box { background: #fff; border-radius: 22px; padding: 32px 28px 28px; width: 90%; max-width: 360px; box-shadow: 0 24px 60px rgba(26,41,66,0.32); border: 2px solid rgba(74,144,226,0.18); transform: scale(0.9) translateY(20px); transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1); text-align: center; position: relative; }
+        .secret-overlay.show .secret-box { transform: scale(1) translateY(0); }
+        .secret-strip { height: 4px; background: linear-gradient(90deg,#1a2942,#4a90e2,#87ceeb); border-radius: 18px 18px 0 0; margin: -32px -28px 26px; }
+        .secret-icon { width: 62px; height: 62px; background: linear-gradient(135deg,#1a2942,#3d5a7f); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 8px 25px rgba(26,41,66,0.25); }
+        .secret-icon i { font-size: 1.45rem; color: #87ceeb; }
+        .secret-title { font-size: 1.12rem; font-weight: 900; color: #1a2942; margin-bottom: 3px; }
+        .secret-sub { font-size: 0.78rem; color: #6b7c93; margin-bottom: 20px; }
+        .secret-dots { display: flex; justify-content: center; gap: 7px; margin-bottom: 20px; }
+        .secret-dot { width: 9px; height: 9px; border-radius: 50%; background: #e0e7ef; transition: background 0.2s, transform 0.2s; }
+        .secret-dot.lit { background: #4a90e2; transform: scale(1.35); }
+        .secret-input { width: 100%; padding: 13px 16px; border: 2px solid rgba(74,144,226,0.25); border-radius: 13px; font-family: 'Cairo',sans-serif; font-size: 1.05rem; text-align: center; letter-spacing: 5px; outline: none; margin-bottom: 8px; transition: border 0.3s; direction: ltr; color: #1a2942; }
+        .secret-input:focus { border-color: #4a90e2; }
+        .secret-err { font-size: 0.79rem; color: #ee5a6f; min-height: 20px; margin-bottom: 10px; display: none; font-weight: 600; }
+        .secret-err.show { display: block; }
+        .secret-btn { width: 100%; padding: 13px; background: linear-gradient(135deg,#1a2942,#3d5a7f); color: #87ceeb; border: none; border-radius: 13px; font-family: 'Cairo',sans-serif; font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: all 0.3s; margin-bottom: 12px; }
+        .secret-close { position: absolute; top: 14px; left: 14px; background: none; border: none; color: #6b7c93; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; font-size: 0.95rem; }
+        @media (max-width: 600px) {
+            nav.top-bar { padding: 14px 20px; }
+            .tab-content { padding: 22px 20px 0; }
+            .modal-body { padding: 20px; }
+            .fields-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-animation">
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+</div>
+
+<nav class="top-bar" id="topBar">
+    <a href="login.html" class="logo-container">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="logo-text">
+            <div class="logo">SITEJ</div>
+            <div class="logo-tagline" data-ar="منصة الكادر التعليمي" data-en="Educational Staff Platform">منصة الكادر التعليمي</div>
+        </div>
+    </a>
+    <div class="nav-actions">
+        <button class="lang-btn" onclick="toggleLang()" id="langBtn">
+            <i class="fas fa-globe"></i>
+            <span id="langBtnText">English</span>
+        </button>
+    </div>
+</nav>
+
+<div class="sn-toast" id="snToast"><i class="fas fa-info-circle"></i> <span id="snToastMsg"></span></div>
+
+<!-- مودال نسيت كلمة المرور -->
+<div class="modal-overlay" id="forgotModal">
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header" style="background:linear-gradient(135deg,#ee5a6f,#f093a3);">
+            <button class="modal-close" onclick="closeForgotModal()"><i class="fas fa-times"></i></button>
+            <i class="fas fa-key" style="font-size:2rem;color:white;margin-bottom:8px;display:block;"></i>
+            <h2>نسيت كلمة المرور؟</h2>
+        </div>
+        <div class="modal-body">
+            <div class="field">
+                <label>البريد الإلكتروني</label>
+                <div class="field-wrap">
+                    <input type="email" id="resetEmail" placeholder="example@school.com">
+                    <i class="fas fa-envelope field-icon"></i>
+                </div>
+            </div>
+            <button onclick="sendResetEmail()" style="background:#ee5a6f;color:white;padding:12px;border:none;border-radius:12px;width:100%;cursor:pointer;font-weight:700;font-family:inherit;font-size:1rem;">
+                <i class="fas fa-paper-plane"></i> إرسال رابط الاسترداد
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- مودال إنشاء حساب الكادر -->
+<div class="modal-overlay" id="registerStaffModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <button class="modal-close" onclick="closeRegisterModal()"><i class="fas fa-times"></i></button>
+            <i class="fas fa-user-plus" style="font-size:2rem;color:white;margin-bottom:8px;display:block;"></i>
+            <h2>تسجيل كادر جديد</h2>
+        </div>
+        <div class="modal-body" id="registerModalBody">
+            <div class="register-badge">
+                <i class="fas fa-key"></i>
+                <span id="registerBadgeText">⚠️ اختر دورك أولاً. الأستاذ يدخل رقمه الوظيفي (يُفعَّل من المدير)، ومساعد المدير والمدير يدخلون كود التفعيل.</span>
+            </div>
+            <div class="fields-row">
+                <div class="register-field">
+                    <label>الاسم الأول *</label>
+                    <div class="field-wrap">
+                        <input type="text" id="regFirstName" placeholder="محمد">
+                        <i class="fas fa-user field-icon"></i>
+                    </div>
+                </div>
+                <div class="register-field">
+                    <label>اسم العائلة *</label>
+                    <div class="field-wrap">
+                        <input type="text" id="regLastName" placeholder="الأحمد">
+                        <i class="fas fa-user field-icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="register-field">
+                <label>البريد الإلكتروني *</label>
+                <div class="field-wrap">
+                    <input type="email" id="regEmail" placeholder="example@school.com">
+                    <i class="fas fa-envelope field-icon"></i>
+                </div>
+            </div>
+            <div class="register-field">
+                <label>الدور الوظيفي *</label>
+                <div class="field-wrap">
+                    <select id="regRole" onchange="handleRoleChange()">
+                        <option value="" disabled selected>— اختر دورك —</option>
+                        <option value="teacher">📑 أستاذ / معلم</option>
+                        <option value="vice_principal">⭐ مساعد مدير</option>
+                        <option value="principal">🏫 مدير المدرسة</option>
+                    </select>
+                    <i class="fas fa-briefcase field-icon"></i>
+                </div>
+            </div>
+            <div class="teacher-section" id="teacherSection">
+                <div class="teacher-section-title"><i class="fas fa-id-badge"></i> الرقم الوظيفي / الوزاري</div>
+                <div class="register-field" style="margin-bottom:6px;">
+                    <div class="field-wrap">
+                        <input type="text" id="regJobNumber" placeholder="أدخل رقمك الوظيفي" inputmode="numeric" autocomplete="off">
+                        <i class="fas fa-id-card field-icon"></i>
+                    </div>
+                    <div class="field-hint">يجب أن يكون المدير قد أضاف رقمك مسبقاً، وإلا لن يتم قبول التسجيل.</div>
+                </div>
+                <div class="teacher-section-title" style="margin-top:14px;"><i class="fas fa-book-open"></i> المادة التي تدرّسها</div>
+                <div class="register-field" style="margin-bottom:16px;">
+                    <div class="field-wrap">
+                        <input type="text" id="regSubject" placeholder="مثال: رياضيات">
+                        <i class="fas fa-book field-icon"></i>
+                    </div>
+                </div>
+                <div class="teacher-section-title" style="margin-top:8px;"><i class="fas fa-chalkboard"></i> الصفوف والشعب</div>
+                <div class="class-picker-row">
+                    <div>
+                        <label style="font-size:0.78rem;font-weight:700;color:var(--text-gray);margin-bottom:5px;display:block;">الصف</label>
+                        <select id="gradeSelect" onchange="updateSections()">
+                            <option value="" disabled selected>— الصف —</option>
+                            <option value="1">الأول</option><option value="2">الثاني</option>
+                            <option value="3">الثالث</option><option value="4">الرابع</option>
+                            <option value="5">الخامس</option><option value="6">السادس</option>
+                            <option value="7">السابع</option><option value="8">الثامن</option>
+                            <option value="9">التاسع</option><option value="10">العاشر</option>
+                            <option value="11">الأول ثانوي</option><option value="12">التوجيهي</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem;font-weight:700;color:var(--text-gray);margin-bottom:5px;display:block;">الشعبة</label>
+                        <select id="sectionSelect"><option value="" disabled selected>— الشعبة —</option></select>
+                    </div>
+                    <button class="add-class-btn" onclick="addClass()" type="button"><i class="fas fa-plus"></i></button>
+                </div>
+                <div class="classes-tags" id="classesTags">
+                    <span class="no-classes-hint" id="noClassesHint">لم تُضف أي صف بعد</span>
+                </div>
+                <input type="hidden" id="regClasses" value="[]">
+            </div>
+            <div class="register-field" id="activationCodeField">
+                <label>كود التفعيل *</label>
+                <div class="field-wrap">
+                    <input type="text" id="regActivationCode" placeholder="أدخل الكود المقدم">
+                    <i class="fas fa-qrcode field-icon"></i>
+                </div>
+            </div>
+            <div class="register-field">
+                <label>كلمة المرور *</label>
+                <div class="field-wrap">
+                    <input type="password" id="regPassword" placeholder="8 أحرف على الأقل" oninput="checkPassStrength(this.value)">
+                    <i class="fas fa-lock field-icon"></i>
+                    <button class="toggle-pass" type="button" onclick="togglePassModal('regPassword','regEyeIcon')">
+                        <i class="fas fa-eye" id="regEyeIcon"></i>
+                    </button>
+                </div>
+                <div class="pass-strength">
+                    <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                    <span class="strength-text" id="strengthText">أدخل كلمة المرور</span>
+                </div>
+            </div>
+            <div class="register-field">
+                <label>تأكيد كلمة المرور *</label>
+                <div class="field-wrap">
+                    <input type="password" id="regPasswordConfirm" placeholder="أعد إدخال كلمة المرور">
+                    <i class="fas fa-lock field-icon"></i>
+                    <button class="toggle-pass" type="button" onclick="togglePassModal('regPasswordConfirm','regEyeIcon2')">
+                        <i class="fas fa-eye" id="regEyeIcon2"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="btn-register-modal" id="registerModalBtn" onclick="registerStaffWithCode()">
+                <i class="fas fa-check-circle"></i> إنشاء الحساب
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SECRET ADMIN MODAL -->
+<div class="secret-overlay" id="secretOverlay">
+    <div class="secret-box">
+        <div class="secret-strip"></div>
+        <button class="secret-close" onclick="closeSecret()"><i class="fas fa-times"></i></button>
+        <div class="secret-icon"><i class="fas fa-shield-halved"></i></div>
+        <div class="secret-dots" id="secretDots">
+            <div class="secret-dot"></div><div class="secret-dot"></div>
+            <div class="secret-dot"></div><div class="secret-dot"></div>
+            <div class="secret-dot"></div>
+        </div>
+        <div class="secret-title">وصول المشرف</div>
+        <div class="secret-sub">أدخل رمز الوصول السري</div>
+        <input class="secret-input" type="password" id="secretCodeInput" placeholder="● ● ● ● ● ●" onkeydown="if(event.key==='Enter') submitSecret()">
+        <div class="secret-err" id="secretErr"><i class="fas fa-times-circle"></i> رمز غير صحيح</div>
+        <button class="secret-btn" onclick="submitSecret()"><i class="fas fa-sign-in-alt"></i> دخول لوحة الإدارة</button>
+        <div style="font-size:0.73rem;color:#6b7c93;"><i class="fas fa-lock" style="margin-left:4px;"></i> للمشرف العام فقط</div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="login-card">
+        <div class="login-tabs">
+            <button class="tab-btn active" id="staffTabBtn" onclick="switchTab('staff')">
+                <i class="fas fa-chalkboard-teacher"></i> الكادر
+            </button>
+            <button class="tab-btn" id="studentTabBtn" onclick="switchTab('student')">
+                <i class="fas fa-user-graduate"></i> الطالب
+            </button>
+            <div class="tab-indicator" id="tabIndicator"></div>
+        </div>
+
+        <div class="tab-content active" id="staffTab">
+            <div class="card-head">
+                <div class="card-icon staff-icon"><i class="fas fa-user-shield"></i></div>
+                <div class="card-title">دخول الكادر</div>
+                <div class="card-sub">للمدراء والأساتذة والإدارة</div>
+            </div>
+            <div class="beta-bar">
+                <strong>⚙️ نظام متكامل:</strong>
+                <span>الأستاذ يُفعَّل برقمه الوظيفي من المدير، ومساعد المدير بكود التفعيل.</span>
+            </div>
+            <div class="field">
+                <label>البريد الإلكتروني</label>
+                <div class="field-wrap">
+                    <input type="email" id="staffEmail" placeholder="example@school.com">
+                    <i class="fas fa-envelope field-icon"></i>
+                </div>
+            </div>
+            <div class="field">
+                <label>كلمة المرور</label>
+                <div class="field-wrap">
+                    <input type="password" id="staffPassword" placeholder="كلمة المرور">
+                    <i class="fas fa-lock field-icon"></i>
+                    <button class="toggle-pass" type="button" onclick="togglePassStaff()"><i class="fas fa-eye" id="staffEyeIcon"></i></button>
+                </div>
+            </div>
+            <div class="forgot-row">
+                <span onclick="openForgotModal()"><i class="fas fa-key"></i> نسيت كلمة المرور؟</span>
+            </div>
+            <button class="btn-main btn-staff" id="staffLoginBtn" onclick="staffLogin()">
+                <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+            </button>
+            <div class="switch-link">
+                <span>ليس لديك حساب؟</span>
+                <a onclick="openRegisterModal()">أنشئ حساباً جديداً (كادر)</a>
+            </div>
+        </div>
+
+        <div class="tab-content" id="studentTab">
+            <div class="card-head">
+                <div class="card-icon student-icon"><i class="fas fa-user-graduate"></i></div>
+                <div class="card-title">دخول الطالب</div>
+                <div class="card-sub">أدخل كود التفعيل وكلمة المرور</div>
+            </div>
+            <div class="student-badge">
+                <i class="fas fa-info-circle"></i>
+                <span>كود التفعيل يصدر من المدرسة، لا يمكن إنشاء حساب طالب بنفسك.</span>
+            </div>
+            <div class="field">
+                <label>كود التفعيل</label>
+                <div class="field-wrap">
+                    <input type="text" id="studentNumber" placeholder="مثال: 2026-003">
+                    <i class="fas fa-id-card field-icon"></i>
+                </div>
+            </div>
+            <div class="field">
+                <label>كلمة المرور</label>
+                <div class="field-wrap">
+                    <input type="password" id="studentPassword" placeholder="كلمة المرور">
+                    <i class="fas fa-lock field-icon"></i>
+                    <button class="toggle-pass" type="button" onclick="togglePassStudent()"><i class="fas fa-eye" id="studentEyeIcon"></i></button>
+                </div>
+            </div>
+            <button class="btn-main btn-student" id="studentLoginBtn" onclick="studentLogin()">
+                <i class="fas fa-sign-in-alt"></i> دخول
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SECRET ADMIN SCRIPT -->
+<script>
+(function(){
+    const ADMIN_CODE='2026_159', ADMIN_PAGE='Admin-dashboard.html', SECRET_KEY='s', PRESS_COUNT=5, RESET_MS=1800;
+    let count=0, timer=null;
+    document.addEventListener('keydown',function(e){
+        if(document.getElementById('secretOverlay').classList.contains('show')) return;
+        const tag=document.activeElement.tagName;
+        if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+        if(e.key.toLowerCase()===SECRET_KEY){
+            count++; lightDot(count-1); clearTimeout(timer);
+            timer=setTimeout(()=>{count=0;resetDots();},RESET_MS);
+            if(count>=PRESS_COUNT){count=0;clearTimeout(timer);resetDots();openSecret();}
+        } else {count=0;clearTimeout(timer);resetDots();}
+    });
+    function lightDot(i){const d=document.querySelectorAll('.secret-dot');if(d[i])d[i].classList.add('lit');}
+    function resetDots(){document.querySelectorAll('.secret-dot').forEach(d=>d.classList.remove('lit'));}
+    window.openSecret=function(){document.getElementById('secretCodeInput').value='';document.getElementById('secretErr').classList.remove('show');document.getElementById('secretOverlay').classList.add('show');setTimeout(()=>document.getElementById('secretCodeInput').focus(),380);};
+    window.closeSecret=function(){document.getElementById('secretOverlay').classList.remove('show');count=0;resetDots();};
+    document.getElementById('secretOverlay').addEventListener('click',function(e){if(e.target===this)closeSecret();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSecret();});
+    window.submitSecret=function(){
+        const val=document.getElementById('secretCodeInput').value.trim();
+        if(val===ADMIN_CODE){
+            sessionStorage.setItem('adminGate','1');   // ← الإصلاح: بدونه لوحة المشرف بترجعك لصفحة الدخول
+            window.location.href=ADMIN_PAGE;
+        } else {
+            const err=document.getElementById('secretErr');
+            err.classList.remove('show');void err.offsetWidth;err.classList.add('show');
+            document.getElementById('secretCodeInput').value='';
+            document.getElementById('secretCodeInput').focus();
+        }
+    };
+})();
+</script>
+
+<!-- LANGUAGE -->
+<script>
+let currentLang = localStorage.getItem('sitejLang') || 'ar';
+function applyLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('sitejLang', lang);
+    document.getElementById('htmlRoot').lang = lang;
+    document.getElementById('htmlRoot').dir  = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('langBtnText').textContent = lang === 'ar' ? 'English' : 'عربي';
+    document.querySelectorAll('[data-ar]').forEach(el => {
+        el.textContent = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+    });
+}
+window.toggleLang = function() { applyLang(currentLang === 'ar' ? 'en' : 'ar'); };
+document.addEventListener('DOMContentLoaded', () => applyLang(currentLang));
+</script>
+
+<!-- TEACHER CLASSES -->
+<script>
+const sections = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P'];
+let selectedClasses = [];
+window.handleRoleChange = function() {
+    const role = document.getElementById('regRole').value;
+    const isTeacher = role === 'teacher';
+    document.getElementById('teacherSection').classList.toggle('visible', isTeacher);
+    // الأستاذ: رقم وظيفي بدل كود التفعيل
+    document.getElementById('activationCodeField').style.display = isTeacher ? 'none' : 'block';
+    document.getElementById('registerBadgeText').textContent = isTeacher
+        ? '⚠️ أدخل رقمك الوظيفي / الوزاري. يجب أن يكون المدير قد أضافه مسبقاً.'
+        : '⚠️ يجب إدخال كود تفعيل صالح من مساعد المدير أو المدير';
+};
+window.updateSections = function() {
+    const sel = document.getElementById('sectionSelect');
+    sel.innerHTML = '<option value="" disabled selected>— الشعبة —</option>';
+    sections.forEach(s => { const o = document.createElement('option'); o.value=s; o.textContent=s; sel.appendChild(o); });
+};
+window.addClass = function() {
+    const grade = document.getElementById('gradeSelect').value;
+    const section = document.getElementById('sectionSelect').value;
+    if(!grade||!section){snShowToast('⚠️ اختر الصف والشعبة أولاً');return;}
+    const key = `${grade}${section}`;
+    if(selectedClasses.includes(key)){snShowToast('⚠️ هذا الصف مضاف مسبقاً');return;}
+    selectedClasses.push(key);
+    document.getElementById('regClasses').value = JSON.stringify(selectedClasses);
+    renderClassTags();
+};
+function renderClassTags() {
+    const container = document.getElementById('classesTags');
+    container.innerHTML = '';
+    if(selectedClasses.length===0){
+        const s=document.createElement('span'); s.className='no-classes-hint'; s.textContent='لم تُضف أي صف بعد';
+        container.appendChild(s); return;
+    }
+    selectedClasses.forEach(cls => {
+        const tag=document.createElement('span'); tag.className='class-tag';
+        tag.innerHTML=`الصف ${cls} <button onclick="removeClass('${cls}')" type="button"><i class="fas fa-times"></i></button>`;
+        container.appendChild(tag);
+    });
+}
+window.removeClass = function(cls) {
+    selectedClasses = selectedClasses.filter(c=>c!==cls);
+    document.getElementById('regClasses').value = JSON.stringify(selectedClasses);
+    renderClassTags();
+};
+</script>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDJRA6KpLir1Jo-oVqqAANOglWEBXXn8oA",
+    authDomain: "eliteacademy-37bfc.firebaseapp.com",
+    projectId: "eliteacademy-37bfc",
+    storageBucket: "eliteacademy-37bfc.firebasestorage.app",
+    messagingSenderId: "203080953628",
+    appId: "1:203080953628:web:69efebccc336b79f0554d9"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// Toast
+function snShowToast(msg) {
+    const toast=document.getElementById('snToast'), m=document.getElementById('snToastMsg');
+    if(toast&&m){m.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3500);}
+}
+window.snShowToast = snShowToast;
+
+// Drawer
+window.snClose  = ()=>{document.getElementById('snDrawer')?.classList.remove('show');document.getElementById('snOverlay')?.classList.remove('show');};
+window.snOpen   = ()=>{document.getElementById('snDrawer')?.classList.add('show');document.getElementById('snOverlay')?.classList.add('show');};
+window.snToggle = ()=>document.getElementById('snDrawer')?.classList.contains('show')?snClose():snOpen();
+window.handleLogout = async ()=>{try{await signOut(auth);}catch(e){} localStorage.clear(); window.location.href='login.html';};
+
+// Password strength
+window.checkPassStrength = function(val) {
+    const fill=document.getElementById('strengthFill'), text=document.getElementById('strengthText');
+    if(!fill||!text) return;
+    if(!val){fill.className='strength-fill';text.className='strength-text';text.textContent='أدخل كلمة المرور';return;}
+    let score=0;
+    if(val.length>=8)score++;if(/[A-Z]/.test(val))score++;if(/[0-9]/.test(val))score++;if(/[^A-Za-z0-9]/.test(val))score++;
+    if(score<=1){fill.className='strength-fill weak';text.className='strength-text weak';text.textContent='ضعيفة';}
+    else if(score<=2){fill.className='strength-fill medium';text.className='strength-text medium';text.textContent='متوسطة';}
+    else{fill.className='strength-fill strong';text.className='strength-text strong';text.textContent='قوية ✓';}
+};
+
+// Validate activation code (مساعد المدير / المدير فقط)
+async function validateActivationCode(code, targetRole) {
+    try {
+        const snap = await getDocs(query(collection(db,'activationCodes'), where('code','==',code)));
+        if(snap.empty) return {valid:false, reason:'الكود غير موجود في النظام'};
+        const codeDoc=snap.docs[0], codeData=codeDoc.data();
+        if(codeData.expiresAt){
+            const exp=codeData.expiresAt.toDate?codeData.expiresAt.toDate():new Date(codeData.expiresAt);
+            if(exp<new Date()) return {valid:false, reason:'انتهت صلاحية الكود', doc:codeDoc};
+        }
+        const allowedRole=codeData.allowedRole;
+        if(allowedRole===targetRole||
+           (allowedRole==='vice_principal'&&targetRole==='teacher')||
+           allowedRole===targetRole) return {valid:true, doc:codeDoc};
+        return {valid:false, reason:`الكود مخصص لـ ${allowedRole} وليس لـ ${targetRole}`, doc:codeDoc};
+    } catch(err) { return {valid:false, reason:'حدث خطأ في التحقق من الكود'}; }
+}
+
+// Validate teacher job number (يجب أن يكون المدير أضافه في teacherNumbers)
+async function validateJobNumber(num) {
+    try {
+        if(num.includes('/')) return {valid:false, reason:'الرقم الوظيفي غير صالح'};
+        const ref = doc(db,'teacherNumbers',num);
+        const snap = await getDoc(ref);
+        if(!snap.exists()) return {valid:false, reason:'هذا الرقم الوظيفي غير مُفعَّل، تواصل مع المدير'};
+        if(snap.data().used) return {valid:false, reason:'هذا الرقم الوظيفي مستخدم لحساب آخر'};
+        return {valid:true, ref};
+    } catch(err) { return {valid:false, reason:'حدث خطأ في التحقق من الرقم الوظيفي'}; }
+}
+
+// Register staff
+window.registerStaffWithCode = async function() {
+    const firstName=document.getElementById('regFirstName').value.trim();
+    const lastName=document.getElementById('regLastName').value.trim();
+    const email=document.getElementById('regEmail').value.trim();
+    const role=document.getElementById('regRole').value;
+    const activationCode=document.getElementById('regActivationCode').value.trim();
+    const jobNumber=document.getElementById('regJobNumber').value.trim();
+    const password=document.getElementById('regPassword').value;
+    const confirm=document.getElementById('regPasswordConfirm').value;
+    const btn=document.getElementById('registerModalBtn');
+    if(!firstName||!lastName){snShowToast('⚠️ يرجى إدخال الاسم الكامل');return;}
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){snShowToast('⚠️ بريد إلكتروني غير صالح');return;}
+    if(!role){snShowToast('⚠️ يرجى اختيار الدور الوظيفي');return;}
+    if(role==='teacher'){
+        if(!jobNumber){snShowToast('⚠️ يرجى إدخال الرقم الوظيفي');return;}
+    } else {
+        if(!activationCode){snShowToast('⚠️ يرجى إدخال كود التفعيل');return;}
+    }
+    if(password.length<8){snShowToast('⚠️ كلمة المرور 8 أحرف على الأقل');return;}
+    if(password!==confirm){snShowToast('⚠️ كلمتا المرور غير متطابقتين');return;}
+    let subjectValue='', classesValue=[];
+    if(role==='teacher'){
+        subjectValue=document.getElementById('regSubject').value.trim();
+        if(!subjectValue){snShowToast('⚠️ يرجى إدخال المادة');return;}
+        try{classesValue=JSON.parse(document.getElementById('regClasses').value||'[]');}catch(e){classesValue=[];}
+        if(classesValue.length===0){snShowToast('⚠️ يرجى إضافة صف وشعبة واحدة على الأقل');return;}
+    }
+    btn.disabled=true; btn.innerHTML='<span class="spinner"></span> جاري التحقق...';
+    try {
+        const result = role==='teacher'
+            ? await validateJobNumber(jobNumber)
+            : await validateActivationCode(activationCode, role);
+        if(!result.valid){snShowToast(`❌ ${result.reason}`);btn.disabled=false;btn.innerHTML='<i class="fas fa-check-circle"></i> إنشاء الحساب';return;}
+        btn.innerHTML='<span class="spinner"></span> جاري إنشاء الحساب...';
+        const cred=await createUserWithEmailAndPassword(auth, email, password);
+        const uid=cred.user.uid;
+        await updateProfile(cred.user, {displayName: firstName+' '+lastName});
+        try{await sendEmailVerification(cred.user);}catch(e){}
+        const userData={firstName,lastName,fullName:firstName+' '+lastName,email,role,status:'active',emailVerified:false,createdAt:serverTimestamp(),uid};
+        if(role==='teacher'){
+            userData.jobNumber=jobNumber;
+            userData.subject=subjectValue;
+            userData.classes=classesValue;
+        } else {
+            userData.activatedByCode=activationCode;
+        }
+        await setDoc(doc(db,'users',uid), userData);
+        if(role==='teacher'){
+            await updateDoc(result.ref, {used:true, usedBy:uid, usedByName:firstName+' '+lastName, usedAt:serverTimestamp()});
+        } else {
+            await updateDoc(result.doc.ref, {lastUsedBy:uid, lastUsedAt:serverTimestamp()});
+        }
+        await signOut(auth);
+        document.getElementById('registerModalBody').innerHTML=`
+            <div class="success-state">
+                <div class="success-icon"><i class="fas fa-check"></i></div>
+                <h3>🎉 تم إنشاء الحساب بنجاح!</h3>
+                <p>يمكنك الآن تسجيل الدخول بالبريد وكلمة المرور.</p>
+                <button class="btn-register-modal" onclick="closeRegisterModal();switchTab('staff');" style="margin-top:20px;">
+                    <i class="fas fa-sign-in-alt"></i> الذهاب لتسجيل الدخول
+                </button>
+            </div>`;
+        snShowToast('🎉 تم إنشاء الحساب بنجاح');
+    } catch(err) {
+        const msgs={'auth/email-already-in-use':'البريد الإلكتروني مسجل مسبقاً','auth/weak-password':'كلمة المرور ضعيفة جداً','auth/invalid-email':'بريد إلكتروني غير صالح'};
+        snShowToast(`❌ ${msgs[err.code]||'حدث خطأ، حاول مرة أخرى'}`);
+        btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> إنشاء الحساب';
+    }
+};
+
+// ════════════════════════════════════
+// تسجيل دخول الكادر
+// ════════════════════════════════════
+window.staffLogin = async function() {
+    const email=document.getElementById('staffEmail').value.trim();
+    const password=document.getElementById('staffPassword').value;
+    if(!email||!password){snShowToast('⚠️ أدخل البريد وكلمة المرور');return;}
+    const btn=document.getElementById('staffLoginBtn');
+    btn.disabled=true; btn.innerHTML='<span class="spinner"></span> جاري التحقق...';
+    try {
+        const cred=await signInWithEmailAndPassword(auth, email, password);
+        const snap=await getDoc(doc(db,'users',cred.user.uid));
+        if(!snap.exists()){await signOut(auth);snShowToast('⚠️ لم يتم العثور على بيانات المستخدم');btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';return;}
+        const data=snap.data();
+        if(data.status&&data.status!=='active'){await signOut(auth);snShowToast('⏳ الحساب غير مفعل، تواصل مع الإدارة');btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';return;}
+
+        // ── امسح بيانات الطالب القديمة لتجنب التعارض ──
+        localStorage.removeItem('studentName');
+        localStorage.removeItem('studentId');
+
+        // ── احفظ بيانات الكادر ──
+        localStorage.setItem('userRole', data.role);
+        localStorage.setItem('userName', data.fullName || data.firstName || '');
+        localStorage.setItem('userUid', cred.user.uid);
+        if(data.role==='teacher'){
+            localStorage.setItem('teacherSubject', data.subject||'');
+            localStorage.setItem('teacherClasses', JSON.stringify(data.classes||[]));
+        }
+        snShowToast(`✅ مرحباً ${data.firstName||''}`);
+        setTimeout(()=>{window.location.replace('index.html');}, 1000);
+    } catch(err) {
+        console.error('staffLogin error:', err.code, err.message);
+        const wrong=['auth/invalid-credential','auth/wrong-password','auth/user-not-found','auth/invalid-email'];
+        let msg;
+        if(wrong.includes(err.code)) msg='⚠️ البريد الإلكتروني أو كلمة المرور غير صحيحة';
+        else if(err.code==='permission-denied'||err.code==='firestore/permission-denied') msg='🚫 قواعد Firestore تمنع قراءة بيانات المستخدم (permission-denied)';
+        else if(err.code==='auth/too-many-requests') msg='⏳ محاولات كثيرة، انتظر قليلاً ثم حاول مرة أخرى';
+        else if(err.code==='auth/network-request-failed') msg='📡 مشكلة في الاتصال بالإنترنت';
+        else msg='⚠️ خطأ: ' + (err.code || err.message || 'غير معروف');
+        try{await signOut(auth);}catch(e){}
+        snShowToast(msg);
+        btn.disabled=false; btn.innerHTML='<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
+    }
+};
+
+// ════════════════════════════════════
+// تسجيل دخول الطالب
+// ════════════════════════════════════
+window.studentLogin = async function() {
+    const activationCode=document.getElementById('studentNumber').value.trim();
+    const password=document.getElementById('studentPassword').value;
+    if(!activationCode||!password){snShowToast('⚠️ كود التفعيل وكلمة المرور مطلوبة');return;}
+    const btn=document.getElementById('studentLoginBtn');
+    btn.disabled=true; btn.innerHTML='<span class="spinner"></span> جاري التحقق...';
+    try {
+        const snap=await getDocs(query(collection(db,'students'), where('activationCode','==',activationCode)));
+        if(snap.empty){snShowToast('⚠️ كود التفعيل غير موجود');btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> دخول';return;}
+        const studentDoc=snap.docs[0];
+        const docData=studentDoc.data();
+        if(docData.status==='banned'){snShowToast('🚫 هذا الحساب محظور، تواصل مع الإدارة');btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> دخول';return;}
+        if(docData.password!==password){snShowToast('⚠️ كلمة مرور خاطئة');btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> دخول';return;}
+
+        // ── امسح بيانات الكادر القديمة لتجنب التعارض ──
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userUid');
+        localStorage.removeItem('teacherSubject');
+        localStorage.removeItem('teacherClasses');
+
+        // ── احفظ بيانات الطالب ──
+        localStorage.setItem('userRole',    'student');
+        localStorage.setItem('studentName', docData.name);
+        localStorage.setItem('studentId',   studentDoc.id);
+
+        snShowToast(`✅ مرحباً ${docData.name}`);
+        setTimeout(()=>{window.location.replace('index.html');}, 1000);
+    } catch(e) {
+        snShowToast('⚠️ خطأ في الاتصال، حاول مرة أخرى');
+        btn.disabled=false; btn.innerHTML='<i class="fas fa-sign-in-alt"></i> دخول';
+    }
+};
+
+// Modals
+window.openRegisterModal  = ()=>{selectedClasses=[];document.getElementById('regClasses').value='[]';document.getElementById('registerStaffModal').classList.add('show');};
+window.closeRegisterModal = ()=>document.getElementById('registerStaffModal').classList.remove('show');
+window.openForgotModal    = ()=>document.getElementById('forgotModal').classList.add('show');
+window.closeForgotModal   = ()=>document.getElementById('forgotModal').classList.remove('show');
+window.sendResetEmail = async function() {
+    const email=document.getElementById('resetEmail').value.trim();
+    if(!email){snShowToast('⚠️ أدخل بريدك الإلكتروني');return;}
+    try{await sendPasswordResetEmail(auth,email);snShowToast('✅ تم إرسال رابط الاسترداد');closeForgotModal();}
+    catch(e){snShowToast(`⚠️ ${e.code==='auth/user-not-found'?'البريد الإلكتروني غير مسجل':'حدث خطأ'}`);}
+};
+
+// Tabs & toggles
+window.switchTab = function(tab) {
+    ['staff','student'].forEach(t=>{document.getElementById(t+'Tab').classList.remove('active');document.getElementById(t+'TabBtn').classList.remove('active');});
+    document.getElementById(tab+'Tab').classList.add('active');
+    document.getElementById(tab+'TabBtn').classList.add('active');
+    document.getElementById('tabIndicator').style.right=(tab==='staff')?'0%':'50%';
+};
+window.togglePassStaff   = ()=>{const i=document.getElementById('staffPassword'),ic=document.getElementById('staffEyeIcon');const p=i.type==='password';i.type=p?'text':'password';ic.className=p?'fas fa-eye-slash':'fas fa-eye';};
+window.togglePassStudent = ()=>{const i=document.getElementById('studentPassword'),ic=document.getElementById('studentEyeIcon');const p=i.type==='password';i.type=p?'text':'password';ic.className=p?'fas fa-eye-slash':'fas fa-eye';};
+window.togglePassModal   = (id,iconId)=>{const i=document.getElementById(id),ic=document.getElementById(iconId);const p=i.type==='password';i.type=p?'text':'password';ic.className=p?'fas fa-eye-slash':'fas fa-eye';};
+
+window.addEventListener('scroll',()=>document.getElementById('topBar').classList.toggle('scrolled',window.scrollY>30));
+document.getElementById('staffPassword')?.addEventListener('keydown', e=>{if(e.key==='Enter')staffLogin();});
+document.getElementById('studentPassword')?.addEventListener('keydown', e=>{if(e.key==='Enter')studentLogin();});
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+</script>
+<script src="settings-apply.js"></script>
+</body>
+</html>

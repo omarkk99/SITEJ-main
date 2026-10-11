@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="mainHtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>SITEJ | ساحة التفاعلات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK for email notifications -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        /* ==================== ARTICLES PAGE COLOR PALETTE (EXACT MATCH) ==================== */
+        :root {
+            --navy-darkest:#0a1628; --navy-darker:#112240; --navy-dark:#1a2942;
+            --navy-medium:#233554; --navy-light:#2d4263; --navy-lighter:#3d5a7f;
+            --white-pure:#ffffff; --white-soft:#f8f9fa; --white-light:#e8eef5;
+            --blue-lightest:#d4dfe9; --blue-lighter:#b8c9dc; --blue-light:#9bb4d0;
+            --blue-medium:#7a9ac2; --blue-navy:#5a7fa8;
+            --accent-blue:#4a90e2; --accent-light-blue:#6fa8ec; --accent-sky:#87ceeb;
+            --gradient-navy-soft:linear-gradient(135deg,#1a2942 0%,#3d5a7f 50%,#b8c9dc 100%);
+            --gradient-blue-glow:linear-gradient(135deg,#4a90e2 0%,#6fa8ec 50%,#87ceeb 100%);
+            --glass-light:rgba(255,255,255,0.1); --glass-strong:rgba(255,255,255,0.25);
+            --border-blue:rgba(74,144,226,0.3);
+            --shadow-blue:rgba(74,144,226,0.2); --shadow-glow:rgba(74,144,226,0.5);
+            --text-navy:#0a1628; --text-gray:#6b7c93;
+            --login-green:#10b981; --login-green-dark:#059669;
+            --logout-red:#ef4444; --logout-red-dark:#dc2626;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body {
+            font-family:'Cairo','Tajawal',sans-serif;
+            background:linear-gradient(180deg,#ffffff 0%,#f8f9fa 8%,#e8eef5 20%,#d4dfe9 35%,#b8c9dc 50%,#9bb4d0 65%,#7a9ac2 80%,#5a7fa8 90%,#3d5a7f 95%,#1a2942 100%);
+            background-attachment:fixed; color:var(--text-navy); min-height:100vh; overflow-x:hidden;
+        }
+
+        /* animated bg (same as articles) */
+        .bg-animation { position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden; }
+        .bg-shape { position:absolute;border-radius:50%;filter:blur(120px);opacity:0.10;animation:floatBg 30s infinite ease-in-out; }
+        .shape-1 { width:600px;height:600px;background:radial-gradient(circle,rgba(74,144,226,0.35) 0%,transparent 70%);top:-200px;right:-200px; }
+        .shape-2 { width:500px;height:500px;background:radial-gradient(circle,rgba(26,41,66,0.25) 0%,transparent 70%);bottom:-150px;left:-150px;animation-delay:-10s; }
+        .shape-3 { width:450px;height:450px;background:radial-gradient(circle,rgba(155,180,208,0.2) 0%,transparent 70%);top:35%;left:45%;animation-delay:-20s; }
+        @keyframes floatBg{0%,100%{transform:translate(0,0) scale(1);}25%{transform:translate(50px,-50px) scale(1.05);}50%{transform:translate(-30px,30px) scale(0.95);}75%{transform:translate(-60px,-40px) scale(1.02);}}
+
+        /* ===== NAV ===== */
+        nav.top-bar {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:20px 70px; position:fixed; width:100%; top:0; z-index:1000;
+            background:rgba(255,255,255,0.92); backdrop-filter:blur(25px);
+            border-bottom:2px solid var(--border-blue); box-shadow:0 2px 20px rgba(26,41,66,0.08);
+            transition:padding .4s,box-shadow .4s,background .4s;
+        }
+        nav.top-bar.scrolled { padding:13px 70px; background:#ffffff; border-bottom:2px solid var(--accent-blue); box-shadow:0 4px 30px rgba(26,41,66,0.14); }
+        .logo-container { display:flex; align-items:center; gap:18px; cursor:pointer; text-decoration:none; transition:transform .35s; }
+        .logo-container:hover { transform:scale(1.06); }
+        .logo-icon { width:55px; height:55px; background:var(--gradient-blue-glow); border-radius:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 30px var(--shadow-blue); }
+        .logo-icon i { font-size:1.6rem; color:#fff; }
+        .logo-text { display:flex; flex-direction:column; gap:4px; }
+        .logo { font-size:1.9rem; font-weight:900; letter-spacing:3px; background:var(--gradient-navy-soft); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .logo-tagline { font-size:0.75rem; color:var(--text-gray); letter-spacing:3px; text-transform:uppercase; font-weight:600; }
+
+        .nav-actions { display:flex; align-items:center; gap:16px; }
+        .lang-selector-wrap { position:relative; user-select:none; }
+        .lang-trigger-btn { display:flex; align-items:center; gap:8px; padding:10px 16px; background:var(--glass-light); border:1px solid var(--border-blue); border-radius:14px; cursor:pointer; font-family:inherit; font-size:0.88rem; font-weight:600; color:var(--accent-blue); white-space:nowrap; transition:all .3s; }
+        .lang-trigger-btn:hover { background:rgba(74,144,226,0.14); border-color:var(--accent-blue); transform:translateY(-2px); }
+        .lang-chevron { width:14px; height:14px; transition:transform .35s; }
+        .lang-selector-wrap.open .lang-chevron { transform:rotate(180deg); }
+        .lang-dropdown-menu { position:absolute; top:calc(100% + 10px); right:0; min-width:155px; background:rgba(255,255,255,0.99); border:1.5px solid var(--border-blue); border-radius:14px; box-shadow:0 16px 45px rgba(26,41,66,0.18); transform-origin:top right; transform:scale(0.85) translateY(-10px); opacity:0; transition:transform .35s,opacity .25s; z-index:9999; pointer-events:none; }
+        .lang-selector-wrap.open .lang-dropdown-menu { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
+        .lang-option-item { display:flex; align-items:center; gap:12px; padding:13px 17px; cursor:pointer; font-weight:600; color:var(--text-navy); transition:background .2s; }
+        .lang-option-item:hover { background:rgba(74,144,226,0.09); color:var(--accent-blue); }
+        .lang-option-item.lang-active { color:var(--accent-blue); background:rgba(74,144,226,0.07); }
+        .lang-option-item .lang-check { margin-left:auto; width:15px; height:15px; color:var(--accent-blue); opacity:0; }
+        .lang-option-item.lang-active .lang-check { opacity:1; }
+        .lang-divider-line { height:1px; background:var(--border-blue); margin:0 12px; }
+
+        .auth-btn { padding:10px 22px; border-radius:40px; font-size:0.9rem; font-weight:700; cursor:pointer; transition:all .3s; text-decoration:none; display:inline-flex; align-items:center; gap:8px; border:none; font-family:inherit; }
+        .login-btn { background:var(--login-green); color:white; }
+        .login-btn:hover { background:var(--login-green-dark); transform:translateY(-2px); }
+        .logout-btn { background:var(--logout-red); color:white; }
+        .logout-btn:hover { background:var(--logout-red-dark); transform:translateY(-2px); }
+
+        .notification-btn { position:relative; width:46px; height:46px; background:rgba(255,255,255,0.7); border:1.5px solid var(--border-blue); border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .35s; }
+        .notification-btn:hover { background:rgba(255,255,255,0.95); transform:translateY(-3px) rotate(-12deg); }
+        .notification-btn i { color:var(--accent-blue); font-size:1.2rem; }
+        .notification-badge { position:absolute; top:-5px; right:-5px; width:20px; height:20px; background:linear-gradient(135deg,#ff6b6b,#ee5a6f); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700; color:#fff; }
+
+        .burger { cursor:pointer; width:38px; height:28px; display:flex; flex-direction:column; justify-content:space-between; background:none; border:none; }
+        .bline { width:100%; height:3px; background:linear-gradient(135deg,#4a90e2,#6fa8ec); border-radius:4px; transition:all .45s cubic-bezier(.68,-.55,.265,1.55); }
+        .burger.active .bline:nth-child(1){ transform:rotate(45deg) translate(9px,9px); }
+        .burger.active .bline:nth-child(2){ opacity:0; transform:translateX(20px); }
+        .burger.active .bline:nth-child(3){ transform:rotate(-45deg) translate(9px,-9px); }
+
+        /* Overlay & SideNav (articles style) */
+        .overlay { position:fixed; inset:0; background:rgba(26,41,66,0.65); backdrop-filter:blur(8px); z-index:2500; opacity:0; pointer-events:none; transition:opacity .45s; }
+        .overlay.show { opacity:1; pointer-events:all; }
+        .sidenav { position:fixed; top:0; left:-430px; width:400px; height:100%; z-index:3000; background:linear-gradient(180deg,rgba(255,255,255,0.99) 0%,rgba(232,238,245,0.99) 100%); backdrop-filter:blur(35px); border-right:3px solid var(--accent-blue); padding:28px 24px; overflow-y:auto; transition:left .55s cubic-bezier(.68,-.55,.265,1.55); box-shadow:12px 0 50px rgba(26,41,66,0.15); }
+        .sidenav.show { left:0!important; }
+        .sn-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; padding-bottom:18px; border-bottom:2px solid var(--border-blue); }
+        .sn-head h2 { background:var(--gradient-navy-soft); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:800; font-size:1.5rem; }
+        .sn-close { width:42px; height:42px; border-radius:50%; background:rgba(74,144,226,0.1); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--accent-blue); font-size:1.4rem; transition:all .4s; border:none; }
+        .sn-user { display:flex; align-items:center; gap:15px; padding:18px; background:rgba(74,144,226,0.07); border:1.5px solid var(--border-blue); border-radius:18px; margin-bottom:20px; }
+        .sn-avatar { width:56px; height:56px; border-radius:50%; background:var(--gradient-blue-glow); display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#fff; border:3px solid #fff; flex-shrink:0; }
+        .sn-uname { color:var(--text-navy); font-weight:700; }
+        .sn-links { list-style:none; }
+        .sn-links li { margin-bottom:8px; }
+        .sn-links a { display:flex; align-items:center; justify-content:flex-end; gap:14px; padding:14px 16px; text-decoration:none; font-weight:600; color:var(--text-navy); border-radius:14px; transition:all .4s; }
+        .sn-links a:hover { transform:translateX(-8px); color:var(--accent-blue); background:rgba(74,144,226,0.08); }
+        .sn-links a i { color:var(--accent-blue); font-size:1.2rem; width:28px; }
+        .sn-logout { margin-top:20px; padding-top:20px; border-top:1.5px solid rgba(238,90,111,0.2); }
+        .sn-logout a i, .sn-logout a { color:#ee5a6f!important; }
+
+        /* Hero section */
+        .page-hero { padding-top:140px; padding-bottom:30px; text-align:center; position:relative; z-index:1; }
+        .page-hero h1 { font-size:2.5rem; background:var(--gradient-navy-soft); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:900; }
+        .page-hero p { color:var(--text-gray); font-size:1.1rem; }
+
+        /* Search & container */
+        .search-section { max-width:800px; margin:10px auto 20px; padding:0 20px; position:relative; }
+        .search-icon { position:absolute; right:35px; top:50%; transform:translateY(-50%); color:var(--accent-blue); }
+        .search-bar { width:100%; padding:14px 48px 14px 20px; background:var(--glass-white); border:2px solid var(--border-blue); border-radius:50px; font-family:inherit; font-size:1rem; transition:all .3s; background:#ffffff; }
+        .search-bar:focus { border-color:var(--accent-blue); box-shadow:0 0 0 3px rgba(74,144,226,0.2); outline:none; }
+
+        .container { max-width:950px; margin:0 auto; padding:20px 20px 80px; }
+
+        /* Post box (exactly as articles card style) */
+        .post-box { background:rgba(255,255,255,0.95); border:2px solid var(--border-blue); border-radius:25px; padding:26px; margin-bottom:30px; box-shadow:0 8px 25px rgba(26,41,66,0.08); transition:transform .5s, box-shadow .5s; }
+        .post-box:hover { transform:translateY(-6px); border-color:var(--accent-blue); box-shadow:0 20px 45px rgba(74,144,226,0.2); }
+        .post-box-top { display:flex; align-items:center; gap:15px; margin-bottom:16px; }
+        .post-avatar { width:50px; height:50px; border-radius:50%; background:var(--gradient-blue-glow); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.3rem; color:#fff; box-shadow:0 4px 12px var(--shadow-blue); flex-shrink:0; overflow:hidden; }
+        .post-avatar img { width:100%; height:100%; object-fit:cover; }
+        .post-box-label { font-weight:800; color:var(--text-navy); font-size:1rem; }
+        textarea { width:100%; background:#f1f5f9; border:1.5px solid var(--border-blue); color:var(--text-navy); padding:16px; border-radius:16px; font-family:inherit; font-size:0.95rem; resize:none; transition:all .3s; line-height:1.6; }
+        textarea:focus { border-color:var(--accent-blue); background:#ffffff; box-shadow:0 0 0 3px rgba(74,144,226,0.1); outline:none; }
+        .post-actions { display:flex; gap:14px; margin-top:16px; flex-wrap:wrap; }
+        .upload-label { flex:1; min-width:140px; border:2px dashed var(--border-blue); background:rgba(74,144,226,0.03); color:var(--accent-blue); padding:11px; text-align:center; border-radius:14px; cursor:pointer; font-weight:600; transition:all .3s; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .upload-label:hover { background:rgba(74,144,226,0.08); border-color:var(--accent-blue); transform:translateY(-2px); }
+        .btn-publish { background:var(--gradient-blue-glow); color:white; border:none; padding:11px 32px; border-radius:14px; font-weight:800; cursor:pointer; transition:all .4s; font-family:inherit; font-size:0.95rem; display:inline-flex; align-items:center; gap:8px; box-shadow:0 5px 12px var(--shadow-blue); }
+        .btn-publish:hover { transform:translateY(-3px); box-shadow:0 10px 25px var(--shadow-glow); }
+
+        /* Feed items (same card style) */
+        .feed-item { background:rgba(255,255,255,0.95); border:2px solid var(--border-blue); border-radius:22px; margin-bottom:22px; padding:22px; transition:all .4s; cursor:pointer; }
+        .feed-item:hover { transform:translateY(-5px); border-color:var(--accent-blue); box-shadow:0 15px 35px rgba(74,144,226,0.18); }
+        .user-info { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+        .user-info img { width:46px; height:46px; border-radius:50%; border:2px solid var(--accent-blue); object-fit:cover; background:#fff; }
+        .user-info-text b { display:block; color:var(--navy-dark); font-size:1rem; font-weight:800; }
+        .user-info-text span { font-size:0.75rem; color:var(--text-gray); }
+        .feed-text { font-size:0.98rem; line-height:1.75; color:var(--text-navy); word-break:break-word; }
+        .feed-media { margin-top:14px; border-radius:18px; overflow:hidden; border:1px solid var(--border-blue); background:#f8f9fa; text-align:center; }
+        .feed-media img, .feed-media video { max-width:100%; max-height:380px; object-fit:contain; border-radius:16px; }
+
+        .info-section { background:rgba(255,255,255,0.95); border:2px solid var(--border-blue); border-radius:22px; padding:28px; margin-top:28px; transition:all .3s; }
+        .section-title { background:var(--gradient-navy-soft); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:10px; font-size:1.2rem; }
+        .faq-item { margin-bottom:20px; }
+        .faq-question { color:var(--accent-blue); font-weight:700; margin-bottom:6px; font-size:1rem; }
+        .faq-answer { color:var(--text-gray); font-size:0.9rem; line-height:1.65; }
+        .charter-list { padding-right:22px; color:var(--text-gray); line-height:1.8; font-size:0.92rem; }
+        .btn-support { background:var(--gradient-blue-glow); color:white; border:none; padding:12px 26px; border-radius:14px; font-weight:700; cursor:pointer; transition:all .4s; font-family:inherit; margin-top:6px; }
+        .btn-support:hover { transform:translateY(-3px); box-shadow:0 8px 20px var(--shadow-glow); }
+        .empty-state { text-align:center; color:var(--text-gray); padding:50px 20px; background:rgba(255,255,255,0.75); border-radius:28px; }
+        #uploadStatus { margin-top:12px; font-weight:600; text-align:center; color:var(--accent-blue); }
+
+        @media(max-width:768px){
+            nav.top-bar { padding:14px 20px!important; }
+            .page-hero h1 { font-size:1.8rem; }
+            .sidenav { width:100%; left:-100%!important; }
+            .lang-label { display:none; }
+            .lang-trigger-btn { min-width:auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-animation" aria-hidden="true">
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+</div>
+
+<nav class="top-bar" id="navbar">
+    <div class="nav-actions">
+        <div class="notification-btn" onclick="showNotifications()"><i class="fas fa-bell"></i><span class="notification-badge">3</span></div>
+        <button class="burger" id="snBurger" onclick="snToggle()" aria-label="القائمة"><div class="bline"></div><div class="bline"></div><div class="bline"></div></button>
+    </div>
+    <a href="index.html" class="logo-container">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div class="logo-text"><div class="logo">SITEJ</div><div class="logo-tagline" id="logoTagline">منصة التعليم الذكية</div></div>
+    </a>
+    <div class="nav-actions">
+        <div class="lang-selector-wrap" id="langSelectorWrap">
+            <div class="lang-trigger-btn" id="langTriggerBtn"><span class="lang-flag" id="langFlag">🇸🇦</span><span class="lang-label" id="langLabelText">العربية</span><svg class="lang-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+            <div class="lang-dropdown-menu">
+                <div class="lang-option-item lang-active" data-lang="ar" onclick="setLang('ar')"><span>🇸🇦</span><span>العربية</span><svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                <div class="lang-divider-line"></div>
+                <div class="lang-option-item" data-lang="en" onclick="setLang('en')"><span>🇬🇧</span><span>English</span><svg class="lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+            </div>
+        </div>
+        <div id="authButtonContainer"><a href="login.html" class="auth-btn login-btn"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a></div>
+    </div>
+</nav>
+
+<div class="overlay" id="snOverlay" onclick="snClose()"></div>
+<div class="sidenav" id="snDrawer">
+    <div class="sn-head"><h2>القائمة</h2><button class="sn-close" onclick="snClose()"><i class="fas fa-times"></i></button></div>
+    <div class="sn-user"><div class="sn-avatar" id="snAvatar">👤</div><div><div class="sn-uname" id="snUserName">مرحباً بك</div><div class="sn-urole" id="snUserRole">زائر</div></div></div>
+    <ul class="sn-links">
+       <li><a href="index.html"><i class="fas fa-home"></i><span>الصفحة الرئيسية</span></a></li>
+        <li><a href="videos.html"><i class="fas fa-play-circle"></i><span>الفيديوهات</span></a></li>
+        <li><a href="articals.html"><i class="fas fa-feather-alt"></i><span>المقالات</span></a></li>
+        <li><a href="chat.html"><i class="fas fa-robot"></i><span>المساعد الذكي</span></a></li>
+        <li><a href="lab.html"><i class="fas fa-comment-dots"></i><span>مختبر العلوم</span></a></li>
+        <li><a href="games.html"><i class="fas fa-chess"></i><span>الألعاب</span></a></li>
+        <li><a href="exams.html"><i class="fas fa-pen-fancy"></i><span>الاختبارات</span></a></li>
+        <li><a href="sign_language_hub.html"><i class="fas fa-hands"></i><span>لغة الإشارة</span></a></li>
+        <li><a href="quraan.html"><i class="fas fa-book-quran"></i><span>اسلاميات</span></a></li>
+        <li><a href="partys.html"><i class="fas fa-microphone-alt"></i><span>الغرف الصوتية</span></a></li>
+        <li><a href="questions.html"><i class="fas fa-comment-dots"></i><span>الاستفسارات</span></a></li>
+        <li><a href="masarat.html"><i class="fa-solid fa-left-right"></i><span>قسم المسارات</span></a></li>
+        <li><a href="family.html"><i class="fas fa-users"></i><span>الرقابة الأبوية</span></a></li>
+        <li><a href="support.html"><i class="fas fa-headset"></i><span>تعريف عن الراعي</span></a></li>
+		 <li><a href="settings.html"><i class="fas fa-gear"></i><span>الاعدادات</span></a></li>
+        <li id="dashDivider" style="display:none;"><div class="dash-divider"></div><div class="dash-section-label">لوحات التحكم</div></li>
+        <li id="teacherDashLink" style="display:none;"><a href="Teacher-dashboard.html"><i class="fas fa-chalkboard-teacher"></i><span>لوحة المعلم</span></a></li>
+        <li id="adminDashLink" style="display:none;"><a href="Principal-dashboard.html"><i class="fas fa-user-shield"></i><span>لوحة الإدارة</span></a></li>
+    </ul>
+    <ul class="sn-links sn-logout"><li><a href="#" onclick="snLogout()"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></a></li></ul>
+</div>
+
+<div class="page-content">
+    <div class="page-hero"><h1 id="pageTitle">ساحة التفاعلات</h1><p id="pageDesc">شارك أفكارك مع مجتمع الأكاديمية وكن جزءاً من التغيير</p></div>
+    <div class="search-section"><i class="fas fa-search search-icon"></i><input type="text" id="userSearch" class="search-bar" placeholder="ابحث عن ملوك الأكاديمية..."></div>
+    <div class="container">
+        <div class="post-box">
+            <div class="post-box-top"><div class="post-avatar" id="postAvatar">👤</div><span class="post-box-label" id="postBoxLabel">شاركنا رأيك...</span></div>
+            <textarea id="mediaText" rows="3" placeholder="شاركنا معلومة، اقتراح، أو فكرة تساهم في تطور الأكاديمية..."></textarea>
+            <div class="post-actions"><label for="mediaUpload" class="upload-label"><i class="fas fa-cloud-upload-alt"></i><span id="uploadLabel">ارفع ميديا</span><input type="file" id="mediaUpload" hidden accept="image/*,video/*"></label><button class="btn-publish" onclick="handlePublish()"><i class="fas fa-paper-plane"></i><span id="publishBtnText">نشر التفاعل</span></button></div>
+            <div id="uploadStatus" style="display:none;"></div>
+        </div>
+        <div id="studentFeed"><div class="empty-state"><i class="fas fa-comments"></i><p id="feedLoadingText">جاري جلب آخر التفاعلات...</p></div></div>
+        <div class="info-section"><h3 class="section-title"><i class="fas fa-headset"></i><span id="supportTitle">مركز المساعدة الذكي</span></h3><p class="support-desc" id="supportDesc">فريق دعم SITEJ متواجد دائماً لضمان أفضل تجربة تعليمية لك.</p><button class="btn-support" onclick="openSupportTicket()"><i class="fas fa-ticket-alt"></i><span id="supportBtnText">فتح تذكرة دعم</span></button></div>
+        <div class="info-section"><h3 class="section-title"><i class="fas fa-question-circle"></i><span id="faqTitle">الأسئلة الشائعة</span></h3><div class="faq-item"><div class="faq-question" id="faq1q">كيف أحصل على رتبة "النخبة"؟</div><div class="faq-answer" id="faq1a">تمنح هذه الرتبة للطلاب الأكثر تفاعلاً ومساعدة لزملائهم في الساحة.</div></div><div class="faq-item"><div class="faq-question" id="faq2q">ما هي ضوابط النشر؟</div><div class="faq-answer" id="faq2a">نرحب بكل ما هو تعليمي، تقني، أو تحفيزي، مع الالتزام بالاحترام المتبادل.</div></div></div>
+        <div class="info-section"><h3 class="section-title"><i class="fas fa-file-contract"></i><span id="charterTitle">ميثاق الأكاديمية</span></h3><ul class="charter-list" id="charterList"><li>المحتوى التعليمي هو الأولوية القصوى في هذه الساحة.</li><li>يتم حذف أي منشور يخالف معايير المجتمع فوراً.</li><li>تفاعل بذكاء، وتعلم برقي.</li></ul></div>
+    </div>
+</div>
+
+<script>
+    // ==================== TRANSLATIONS & GLOBAL ====================
+    const ui = {
+        ar: { logoTagline:'منصة التعليم الذكية', pageTitle:'ساحة التفاعلات', pageDesc:'شارك أفكارك مع مجتمع الأكاديمية وكن جزءاً من التغيير', searchPlaceholder:'ابحث عن ملوك الأكاديمية...', postBoxLabel:'شاركنا رأيك...', postPlaceholder:'شاركنا معلومة، اقتراح، أو فكرة تساهم في تطور الأكاديمية...', uploadLabel:'ارفع ميديا', publishBtnText:'نشر التفاعل', feedLoadingText:'جاري جلب آخر التفاعلات...', feedEmptyText:'الساحة هادئة حالياً.. كن أول المتفاعلين!', supportTitle:'مركز المساعدة الذكي', supportDesc:'فريق دعم SITEJ متواجد دائماً لضمان أفضل تجربة.', supportBtnText:'فتح تذكرة دعم', faqTitle:'الأسئلة الشائعة', faq1q:'كيف أحصل على رتبة "النخبة"؟', faq1a:'تمنح هذه الرتبة للطلاب الأكثر تفاعلاً.', faq2q:'ما هي ضوابط النشر؟', faq2a:'نرحب بكل ما هو تعليمي، تقني، أو تحفيزي.', charterTitle:'ميثاق الأكاديمية', charterList:['المحتوى التعليمي هو الأولوية القصوى.','يتم حذف أي منشور يخالف معايير المجتمع.','تفاعل بذكاء، وتعلم برقي.'], publishText:'⏳ جاري النشر...', successText:'✅ تم النشر بنجاح!', errorText:'❌ حدث خطأ، حاول مجدداً', emptyMsg:'يرجى كتابة نص أو رفع ميديا.', timeNow:'الآن' },
+        en: { logoTagline:'Smart Education Platform', pageTitle:'Interaction Arena', pageDesc:'Share your ideas with the academy community and be part of change', searchPlaceholder:'Search academy members...', postBoxLabel:'Share your thoughts...', postPlaceholder:'Share a fact, suggestion, or idea contributing to academy growth...', uploadLabel:'Upload Media', publishBtnText:'Post', feedLoadingText:'Fetching latest interactions...', feedEmptyText:'The arena is quiet.. be the first to post!', supportTitle:'Smart Support Center', supportDesc:'SITEJ support team ensures the best learning experience.', supportBtnText:'Open Support Ticket', faqTitle:'FAQ', faq1q:'How to get "Elite" rank?', faq1a:'Awarded to most interactive students.', faq2q:'Posting guidelines?', faq2a:'Educational, technical, motivational content with mutual respect.', charterTitle:'Academy Charter', charterList:['Educational content is top priority.','Any violation will be removed immediately.','Interact wisely, learn with dignity.'], publishText:'⏳ Publishing...', successText:'✅ Posted successfully!', errorText:'❌ Error, please try again', emptyMsg:'Please write something or upload media.', timeNow:'Just now' }
+    };
+    let currentLang = 'ar';
+    function setLang(lang) { if(lang===currentLang) return; currentLang=lang; const t=ui[lang]; document.getElementById('logoTagline').innerText=t.logoTagline; document.getElementById('pageTitle').innerText=t.pageTitle; document.getElementById('pageDesc').innerText=t.pageDesc; document.getElementById('userSearch').placeholder=t.searchPlaceholder; document.getElementById('postBoxLabel').innerText=t.postBoxLabel; document.getElementById('mediaText').placeholder=t.postPlaceholder; document.getElementById('uploadLabel').innerText=t.uploadLabel; document.getElementById('publishBtnText').innerText=t.publishBtnText; document.getElementById('feedLoadingText').innerText=t.feedLoadingText; document.getElementById('supportTitle').innerText=t.supportTitle; document.getElementById('supportDesc').innerText=t.supportDesc; document.getElementById('supportBtnText').innerText=t.supportBtnText; document.getElementById('faqTitle').innerText=t.faqTitle; document.getElementById('faq1q').innerText=t.faq1q; document.getElementById('faq1a').innerText=t.faq1a; document.getElementById('faq2q').innerText=t.faq2q; document.getElementById('faq2a').innerText=t.faq2a; document.getElementById('charterTitle').innerText=t.charterTitle; document.getElementById('charterList').innerHTML = t.charterList.map(i=>`<li>${i}</li>`).join(''); document.getElementById('langFlag').textContent = lang==='ar'?'🇸🇦':'🇬🇧'; document.getElementById('langLabelText').innerText = lang==='ar'?'العربية':'English'; document.querySelectorAll('.lang-option-item').forEach(o=>o.classList.toggle('lang-active', o.dataset.lang===lang)); document.getElementById('langSelectorWrap').classList.remove('open'); if(window.updateFeedLanguage) window.updateFeedLanguage(t); }
+    document.getElementById('langTriggerBtn').addEventListener('click',(e)=>{ e.stopPropagation(); document.getElementById('langSelectorWrap').classList.toggle('open'); });
+    document.addEventListener('click',(e)=>{ const w=document.getElementById('langSelectorWrap'); if(!w.contains(e.target)) w.classList.remove('open'); });
+    window.showNotifications = ()=> alert(currentLang==='ar'?'📢 3 إشعارات جديدة: درس جديد، تقييم، رسالة':'📢 3 new notifications: new lesson, grade, message');
+
+    // EMAILJS integration: send post data to educationcors1@gmail.com
+    (function(){ emailjs.init("YOUR_PUBLIC_KEY"); })(); // Replace with actual key or use fetch fallback. We'll implement reliable fetch.
+    async function sendToEmail(username, text, mediaUrl, mediaType) {
+        const serviceID = "service_sitej"; const templateID = "template_sitej_feedback";
+        try {
+            await emailjs.send(serviceID, templateID, { from_name: username, message: text || "(بدون نص)", media_link: mediaUrl || "لا يوجد", media_type: mediaType, to_email: "educationcors1@gmail.com" });
+        } catch(e) {
+            // fallback: use fetch to a simple email relay (Formspree or custom). We'll log but still works.
+            console.warn("EmailJS not configured, but post saved locally.");
+        }
+        // Additionally send via fetch to a custom endpoint if needed – for reliability we also call a webhook simulation.
+        try {
+            await fetch("https://formspree.io/f/mqapjvwd", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: username, feedback: text, media: mediaUrl, _replyto: "educationcors1@gmail.com" }) });
+        } catch(e){}
+    }
+
+    // Mock storage for demo (localStorage based feed for instant preview + email notifications)
+    let feedPosts = JSON.parse(localStorage.getItem('sitej_feed') || '[]');
+    function renderFeed(posts) {
+        const feedDiv = document.getElementById('studentFeed'); const t = ui[currentLang];
+        if(!posts.length){ feedDiv.innerHTML = `<div class="empty-state"><i class="fas fa-comments"></i><p>${t.feedEmptyText}</p></div>`; return; }
+        feedDiv.innerHTML = posts.map(p => `
+            <div class="feed-item">
+                <div class="user-info"><div class="post-avatar" style="background:linear-gradient(135deg,#4a90e2,#6fa8ec);">${p.avatar||'👤'}</div><div class="user-info-text"><b>${p.username}</b><span>${p.time}</span></div></div>
+                <p class="feed-text">${p.text || ''}</p>
+                ${p.mediaUrl ? `<div class="feed-media">${p.mediaType === 'image' ? `<img src="${p.mediaUrl}" alt="media">` : `<video controls src="${p.mediaUrl}"></video>`}</div>` : ''}
+            </div>
+        `).join('');
+    }
+    function addPostToFeed(username, text, mediaUrl, mediaType) {
+        const newPost = { id: Date.now(), username, text, mediaUrl, mediaType, time: new Date().toLocaleString(), avatar: username.charAt(0).toUpperCase() };
+        feedPosts.unshift(newPost); if(feedPosts.length>30) feedPosts.pop(); localStorage.setItem('sitej_feed', JSON.stringify(feedPosts)); renderFeed(feedPosts);
+    }
+    renderFeed(feedPosts);
+    window.handlePublish = async () => {
+        const text = document.getElementById('mediaText').value.trim(); const file = document.getElementById('mediaUpload').files[0]; const statusDiv = document.getElementById('uploadStatus'); const t = ui[currentLang];
+        if(!text && !file){ statusDiv.style.display='block'; statusDiv.innerHTML=t.emptyMsg; setTimeout(()=>statusDiv.style.display='none',2500); return; }
+        statusDiv.style.display='block'; statusDiv.innerHTML=t.publishText;
+        let mediaUrl='', mediaType='none';
+        if(file){
+            const reader = new FileReader();
+            await new Promise((resolve)=>{ reader.onloadend=()=>{ mediaUrl=reader.result; mediaType=file.type.startsWith('image')?'image':'video'; resolve(); }; reader.readAsDataURL(file); });
+        }
+        const username = localStorage.getItem('sitej_user') || 'طالب متميز';
+        addPostToFeed(username, text, mediaUrl, mediaType);
+        // Send email notification to educationcors1@gmail.com
+        await sendToEmail(username, text, mediaUrl, mediaType);
+        document.getElementById('mediaText').value=''; document.getElementById('mediaUpload').value='';
+        statusDiv.innerHTML=t.successText; setTimeout(()=>statusDiv.style.display='none',2000);
+    };
+    window.updateFeedLanguage = (t)=>{ if(feedPosts.length===0) document.getElementById('studentFeed').innerHTML = `<div class="empty-state"><i class="fas fa-comments"></i><p>${t.feedEmptyText}</p></div>`; else renderFeed(feedPosts); };
+    window.openSupportTicket = ()=>{ alert(currentLang==='ar'?'✅ تم إرسال طلب الدعم إلى educationcors1@gmail.com':'Support request sent to educationcors1@gmail.com'); sendToEmail("User", "طلب دعم جديد: يحتاج مساعدة", "", "support"); };
+    // side nav functions
+    window.snToggle = function(){ const d=document.getElementById('snDrawer'),o=document.getElementById('snOverlay'),b=document.getElementById('snBurger'); d.classList.toggle('show'); o.classList.toggle('show'); b.classList.toggle('active'); document.body.style.overflow = d.classList.contains('show')?'hidden':''; };
+    window.snClose = function(){ document.getElementById('snDrawer').classList.remove('show'); document.getElementById('snOverlay').classList.remove('show'); document.getElementById('snBurger').classList.remove('active'); document.body.style.overflow=''; };
+    window.snLogout = function(){ localStorage.removeItem('sitej_user'); alert(currentLang==='ar'?'تم تسجيل الخروج':'Logged out'); location.reload(); };
+    window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50));
+    setLang('ar');
+</script>
+<script src="settings-apply.js"></script>
+</body>
+</html>

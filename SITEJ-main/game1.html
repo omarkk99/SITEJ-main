@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدينة المليارديير</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#d4a017;--g2:#f5cc50;--green:#22c55e;--red:#ef4444;--blue:#38bdf8;
+  --dark:#07090f;--panel:#0c1220;--border:rgba(212,160,23,0.16);
+  --txt:#ddd0b0;--dim:#5a5440;--pw:280px;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);
+  font-family:'Tajawal',sans-serif;color:var(--txt)}
+#gc{display:block;position:fixed;top:0;left:0}
+
+/* HUD */
+#hud{position:fixed;top:0;left:0;right:var(--pw);height:50px;
+  background:linear-gradient(180deg,rgba(7,9,15,.97),transparent);
+  display:flex;align-items:center;gap:8px;padding:0 12px;z-index:60;pointer-events:none}
+.hp{display:flex;align-items:center;gap:5px;background:rgba(7,9,15,.88);
+  border:1px solid var(--border);border-radius:18px;padding:4px 10px;pointer-events:auto;backdrop-filter:blur(6px)}
+.hp .v{font-size:.9rem;font-weight:700;line-height:1.1}
+.hp .l{font-size:.55rem;color:var(--dim)}
+#mv{color:var(--gold)}#iv{color:var(--green)}#pv{color:#a78bfa}
+.xpw{display:flex;flex-direction:column;gap:2px;flex:1;max-width:150px}
+.xpl{font-size:.62rem;font-weight:700;color:var(--g2)}
+.xpb{height:4px;background:rgba(255,255,255,.07);border-radius:2px}
+.xpf{height:4px;background:linear-gradient(90deg,var(--gold),var(--g2));border-radius:2px;transition:width .5s}
+.htitle{font-size:.9rem;font-weight:800;color:var(--gold);white-space:nowrap}
+
+/* PANEL */
+#panel{position:fixed;right:0;top:0;bottom:0;width:var(--pw);
+  background:rgba(8,12,20,.98);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:50;backdrop-filter:blur(10px)}
+.ptabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ptab{flex:1;padding:9px 2px;text-align:center;font-size:.68rem;font-weight:700;
+  cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;transition:.15s}
+.ptab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.pcon{display:none;flex:1;overflow-y:auto;padding:9px;flex-direction:column;gap:6px}
+.pcon.on{display:flex}
+.pcon::-webkit-scrollbar{width:2px}
+.pcon::-webkit-scrollbar-thumb{background:var(--border)}
+
+/* Category header */
+.cat{font-size:.6rem;font-weight:700;color:var(--dim);letter-spacing:1px;
+  padding:6px 2px 3px;text-transform:uppercase;flex-shrink:0}
+
+/* Shop card */
+.sc{border:1px solid var(--border);border-radius:8px;padding:8px;
+  cursor:pointer;transition:.15s;background:rgba(255,255,255,.018);flex-shrink:0;position:relative}
+.sc:hover{border-color:var(--gold);background:rgba(212,160,23,.06);transform:translateX(-2px)}
+.sc.sel{border-color:var(--g2);background:rgba(245,204,80,.09)}
+.sc.lk{opacity:.28;pointer-events:none}
+.sc-t{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.sc-i{font-size:1.25rem;width:26px;text-align:center;flex-shrink:0}
+.sc-n{font-size:.8rem;font-weight:700}
+.sc-s{font-size:.56rem;color:var(--dim);margin-top:1px}
+.sc-r{display:flex;justify-content:space-between;font-size:.66rem}
+.lktag{position:absolute;top:5px;left:6px;background:rgba(0,0,0,.8);
+  border-radius:3px;padding:1px 5px;font-size:.54rem;color:var(--dim)}
+
+/* Port card */
+.pc{border:1px solid rgba(34,197,94,.13);border-radius:8px;padding:8px;
+  background:rgba(34,197,94,.025);flex-shrink:0}
+.pc-t{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.pc-n{font-size:.77rem;font-weight:700;flex:1}
+.pc-i{color:var(--green);font-size:.72rem;font-weight:700;white-space:nowrap}
+.lb{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:4px}
+.lf{height:3px;background:var(--green);border-radius:2px;transition:width .4s}
+.ub{margin-top:6px;width:100%;padding:5px;border-radius:5px;
+  border:1px solid var(--gold);background:rgba(212,160,23,.07);
+  color:var(--gold);font-family:'Tajawal',sans-serif;font-size:.65rem;font-weight:700;cursor:pointer;transition:.15s}
+.ub:hover:not(:disabled){background:rgba(212,160,23,.17)}
+.ub:disabled{opacity:.25;cursor:not-allowed}
+
+/* Build card */
+.bc{border:1px solid rgba(56,189,248,.18);border-radius:8px;padding:8px;
+  background:rgba(56,189,248,.025);flex-shrink:0}
+.bc-t{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.bc-n{font-size:.77rem;font-weight:700;flex:1}
+.bc-p{font-size:.72rem;font-weight:700;color:var(--blue)}
+.bb{height:4px;background:rgba(255,255,255,.06);border-radius:2px}
+.bf{height:4px;background:linear-gradient(90deg,var(--blue),#7dd3fc);border-radius:2px;transition:width .4s}
+.bc-r{font-size:.62rem;color:var(--dim);margin-top:3px}
+.empty{color:var(--dim);text-align:center;margin-top:28px;font-size:.75rem;line-height:2;padding:0 6px}
+
+/* Bottom bar */
+#bb{position:fixed;bottom:0;left:0;right:var(--pw);height:40px;
+  background:linear-gradient(0deg,rgba(7,9,15,.96),transparent);
+  display:flex;align-items:center;justify-content:center;gap:10px;z-index:60;pointer-events:none}
+#spd{pointer-events:auto;background:rgba(7,9,15,.88);border:1px solid var(--border);
+  border-radius:18px;padding:4px 12px;font-family:'Tajawal',sans-serif;
+  font-size:.7rem;font-weight:700;color:var(--txt);cursor:pointer;transition:.15s}
+#spd:hover{border-color:var(--gold);color:var(--gold)}
+#tip{color:var(--dim);font-size:.58rem;background:rgba(7,9,15,.7);
+  padding:3px 10px;border-radius:12px;white-space:nowrap}
+
+/* Toasts */
+#toasts{position:fixed;top:58px;left:50%;
+  transform:translateX(calc(-50% - 140px));
+  z-index:300;display:flex;flex-direction:column;gap:5px;align-items:center;pointer-events:none}
+.toast{background:rgba(7,9,15,.97);border:1px solid var(--border);border-radius:20px;
+  padding:6px 14px;font-size:.75rem;font-weight:600;white-space:nowrap;
+  animation:tin .22s ease;border-left:3px solid var(--gold)}
+.toast.ok{border-left-color:var(--green)}
+.toast.err{border-left-color:var(--red)}
+.toast.info{border-left-color:var(--blue)}
+@keyframes tin{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+/* Minimap */
+#mm{position:fixed;bottom:48px;left:10px;width:130px;height:130px;
+  background:rgba(5,7,12,.95);border:1px solid var(--border);border-radius:7px;z-index:60;overflow:hidden}
+#mm canvas{width:100%;height:100%}
+#mmtip{position:absolute;bottom:2px;left:0;right:0;text-align:center;
+  font-size:.52rem;color:rgba(255,255,255,.18);pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="gc"></canvas>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="htitle">🏙️ مليارديير</div>
+  <div class="hp"><span>💰</span><div><div id="mv" class="v">$10,000</div><div class="l">رأس المال</div></div></div>
+  <div class="hp"><span>📈</span><div><div id="iv" class="v">+$0/ث</div><div class="l">الدخل</div></div></div>
+  <div class="hp" style="flex:1;max-width:160px">
+    <span>⭐</span>
+    <div class="xpw"><div id="lv" class="xpl">Lv.1 مطور مبتدئ</div>
+    <div class="xpb"><div id="xpf" class="xpf" style="width:0%"></div></div></div>
+  </div>
+  <div class="hp"><span>🏗️</span><div><div id="pv" class="v">0</div><div class="l">عقارات</div></div></div>
+</div>
+
+<!-- PANEL -->
+<div id="panel">
+  <div class="ptabs">
+    <div class="ptab on"  onclick="tab('shop')">🏗️ بناء</div>
+    <div class="ptab"     onclick="tab('port')">📊 عقاراتي</div>
+    <div class="ptab"     onclick="tab('build')">⏳ قيد الإنشاء</div>
+  </div>
+  <div id="t-shop"  class="pcon on"></div>
+  <div id="t-port"  class="pcon"></div>
+  <div id="t-build" class="pcon"></div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div id="bb">
+  <button id="spd" onclick="cycleSpeed()">⏩ ×1</button>
+  <div id="tip">انقر أرض لاختيار موقع • انقر مبنى للإدارة • اسحب للتنقل</div>
+</div>
+
+<div id="toasts"></div>
+<div id="mm"><canvas id="mc" width="130" height="130"></canvas><div id="mmtip">الخريطة</div></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// ASSET CATALOG — 32 buildings with real-world inspired prices
+// cat: 0=سكني 1=تجاري 2=خدمات 3=ترفيه 4=مال 5=ضخم
+// ═══════════════════════════════════════════════════════════════
+var CATS=['🏠 سكني','🏪 تجاري','🏥 خدمات','🎭 ترفيه','🏦 مالي','🌆 ضخم'];
+var ASSETS=[
+// ─── سكني ───────────────────────────────────
+{id:0, cat:0,name:'كوخ صغير',    icon:'🛖',cost:5000,     inc:20,   bt:10, w:1,h:1,floors:1, color:'#7c4a2a',roof:'#5a3018',cust:1,lv:1},
+{id:1, cat:0,name:'بيت عائلي',   icon:'🏠',cost:25000,    inc:80,   bt:20, w:2,h:1,floors:2, color:'#c0392b',roof:'#922b21',cust:2,lv:1},
+{id:2, cat:0,name:'فيلا صغيرة',  icon:'🏡',cost:80000,    inc:250,  bt:35, w:2,h:2,floors:2, color:'#e8d5a3',roof:'#c9a227',cust:2,lv:2},
+{id:3, cat:0,name:'فيلا فاخرة',  icon:'🏰',cost:250000,   inc:800,  bt:60, w:3,h:2,floors:3, color:'#f5e6c8',roof:'#d4a017',cust:3,lv:3},
+{id:4, cat:0,name:'شقة صغيرة',   icon:'🏢',cost:40000,    inc:150,  bt:30, w:1,h:2,floors:4, color:'#546e7a',roof:'#37474f',cust:3,lv:1},
+{id:5, cat:0,name:'عمارة سكنية', icon:'🏬',cost:150000,   inc:600,  bt:55, w:2,h:2,floors:7, color:'#455a64',roof:'#263238',cust:6,lv:2},
+{id:6, cat:0,name:'برج شقق A',   icon:'🏙️',cost:500000,  inc:2500, bt:120,w:2,h:3,floors:15,color:'#1565c0',roof:'#0d47a1',cust:8,lv:4},
+{id:7, cat:0,name:'برج شقق فاخر',icon:'🌃',cost:2000000,  inc:9000, bt:240,w:3,h:3,floors:25,color:'#1a237e',roof:'#0d1261',cust:12,lv:6},
+// ─── تجاري ──────────────────────────────────
+{id:8, cat:1,name:'بسطة',        icon:'🍉',cost:1000,     inc:5,    bt:5,  w:1,h:1,floors:1, color:'#27ae60',roof:'#1a7a40',cust:1,lv:1},
+{id:9, cat:1,name:'بقالة',       icon:'🛒',cost:8000,     inc:30,   bt:12, w:2,h:1,floors:1, color:'#2e7d32',roof:'#1b5e20',cust:2,lv:1},
+{id:10,cat:1,name:'كافيه',       icon:'☕',cost:30000,    inc:100,  bt:22, w:2,h:1,floors:2, color:'#5d4037',roof:'#3e2723',cust:3,lv:1},
+{id:11,cat:1,name:'مطعم شعبي',   icon:'🍽️',cost:60000,   inc:220,  bt:35, w:2,h:2,floors:2, color:'#b71c1c',roof:'#7f0000',cust:4,lv:2},
+{id:12,cat:1,name:'محل ملابس',   icon:'👗',cost:50000,    inc:180,  bt:30, w:2,h:1,floors:2, color:'#6a1b9a',roof:'#4a148c',cust:3,lv:2},
+{id:13,cat:1,name:'سوبر ماركت',  icon:'🏪',cost:200000,   inc:700,  bt:55, w:3,h:2,floors:3, color:'#00695c',roof:'#004d40',cust:6,lv:3},
+{id:14,cat:1,name:'مول تجاري',   icon:'🏬',cost:1500000,  inc:5000, bt:180,w:4,h:3,floors:5, color:'#1565c0',roof:'#0d47a1',cust:10,lv:5},
+{id:15,cat:1,name:'مركز أعمال',  icon:'🏗️',cost:5000000, inc:18000,bt:360,w:4,h:4,floors:12,color:'#263238',roof:'#102027',cust:15,lv:7},
+// ─── خدمات ──────────────────────────────────
+{id:16,cat:2,name:'صيدلية',      icon:'💊',cost:40000,    inc:140,  bt:25, w:1,h:1,floors:2, color:'#0277bd',roof:'#01579b',cust:2,lv:1},
+{id:17,cat:2,name:'مستوصف',      icon:'🏥',cost:200000,   inc:650,  bt:60, w:3,h:2,floors:3, color:'#c62828',roof:'#b71c1c',cust:4,lv:3},
+{id:18,cat:2,name:'مدرسة',       icon:'🏫',cost:500000,   inc:1500, bt:90, w:3,h:3,floors:4, color:'#f57f17',roof:'#e65100',cust:5,lv:4},
+{id:19,cat:2,name:'مستشفى',      icon:'🏨',cost:2000000,  inc:7000, bt:200,w:4,h:3,floors:8, color:'#e53935',roof:'#c62828',cust:8,lv:6},
+{id:20,cat:2,name:'جامعة',       icon:'🎓',cost:8000000,  inc:28000,bt:400,w:5,h:4,floors:6, color:'#4527a0',roof:'#311b92',cust:12,lv:8},
+// ─── ترفيه ──────────────────────────────────
+{id:21,cat:3,name:'ملعب رياضي',  icon:'⚽',cost:80000,    inc:300,  bt:40, w:2,h:2,floors:1, color:'#2e7d32',roof:'#1b5e20',cust:4,lv:2},
+{id:22,cat:3,name:'سينما',       icon:'🎬',cost:300000,   inc:1100, bt:75, w:3,h:2,floors:3, color:'#6a1b9a',roof:'#4a148c',cust:7,lv:3},
+{id:23,cat:3,name:'فندق ★★★',    icon:'🏩',cost:800000,   inc:3000, bt:120,w:3,h:3,floors:8, color:'#00838f',roof:'#006064',cust:8,lv:5},
+{id:24,cat:3,name:'منتجع فاخر',  icon:'🌴',cost:5000000,  inc:20000,bt:300,w:4,h:4,floors:12,color:'#00695c',roof:'#004d40',cust:12,lv:7},
+// ─── مالي ───────────────────────────────────
+{id:25,cat:4,name:'صراف آلي',    icon:'🏧',cost:10000,    inc:50,   bt:8,  w:1,h:1,floors:1, color:'#37474f',roof:'#263238',cust:1,lv:1},
+{id:26,cat:4,name:'بنك محلي',    icon:'🏦',cost:500000,   inc:2000, bt:100,w:3,h:2,floors:6, color:'#bf360c',roof:'#7f2008',cust:5,lv:4},
+{id:27,cat:4,name:'بنك وطني',    icon:'💳',cost:3000000,  inc:12000,bt:250,w:4,h:3,floors:12,color:'#880e4f',roof:'#560027',cust:8,lv:6},
+{id:28,cat:4,name:'بورصة',       icon:'📈',cost:10000000, inc:50000,bt:500,w:5,h:4,floors:15,color:'#1a237e',roof:'#0d0052',cust:10,lv:9},
+// ─── ضخم ────────────────────────────────────
+{id:29,cat:5,name:'ناطحة A',     icon:'🏢',cost:8000000,  inc:35000,bt:400,w:3,h:5,floors:30,color:'#1c2833',roof:'#0e1820',cust:15,lv:7},
+{id:30,cat:5,name:'ناطحة فاخرة', icon:'🌆',cost:25000000, inc:110000,bt:720,w:4,h:5,floors:50,color:'#0d1b2a',roof:'#060e17',cust:20,lv:9},
+{id:31,cat:5,name:'برج المليارديير',icon:'🌃',cost:100000000,inc:500000,bt:1440,w:5,h:5,floors:80,color:'#030d18',roof:'#010508',cust:30,lv:10},
+];
+
+var UPG={
+  cost:function(base,lv){return Math.floor(base*Math.pow(1.7,lv));},
+  mult:function(lv){return 1+lv*0.6;}
+};
+var LEVELS=[
+  {xp:0,       n:'مطور مبتدئ'},
+  {xp:2000,    n:'مقاول صغير'},
+  {xp:10000,   n:'مستثمر عقاري'},
+  {xp:50000,   n:'مطور عقاري'},
+  {xp:200000,  n:'رجل أعمال'},
+  {xp:1000000, n:'مليونير'},
+  {xp:5000000, n:'مطور كبير'},
+  {xp:20000000,n:'مليارديير'},
+  {xp:100000000,n:'إمبراطور العقار'},
+  {xp:500000000,n:'أسطورة المدن'},
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+var money=10000, income=0, xp=0, gLv=1;
+var owned=[];
+var constructing=[];
+var npcs=[];
+var nextId=0;
+var gameSpeed=1;
+var CELL=56;
+var GW=40, GH=40;
+var camX=0, camY=0;
+var isDrag=false, dSX=0,dSY=0,dCX=0,dCY=0;
+var selAsset=-1;
+var hovered=null;
+var popup=null;
+var mouseGC={c:-1,r:-1};
+var frameN=0;
+
+// Grid
+var grid=[];
+for(var _i=0;_i<GW;_i++){grid[_i]=[];for(var _j=0;_j<GH;_j++)grid[_i][_j]=null;}
+
+// ═══════════════════════════════════════════
+// CANVAS
+// ═══════════════════════════════════════════
+var PW=280;
+var cv=document.getElementById('gc');
+var cx=cv.getContext('2d');
+cx.imageSmoothingEnabled=true;
+cx.imageSmoothingQuality='low';
+
+function resize(){
+  cv.width=window.innerWidth-PW;
+  cv.height=window.innerHeight;
+  resetCam();
+}
+function resetCam(){
+  camX=cv.width/2-(GW/2)*(CELL/2);
+  camY=cv.height/4;
+}
+resize();
+window.addEventListener('resize',function(){resize();});
+
+// ═══════════════════════════════════════════
+// ISO MATH
+// ═══════════════════════════════════════════
+function iso(c,r){
+  return{
+    x:(c-r)*(CELL/2)+camX+(GW*CELL/2),
+    y:(c+r)*(CELL/4)+camY
+  };
+}
+function s2g(sx,sy){
+  var rx=sx-camX-(GW*CELL/2);
+  var ry=sy-camY;
+  var col=(rx/(CELL/2)+ry/(CELL/4))/2;
+  var row=(-rx/(CELL/2)+ry/(CELL/4))/2;
+  return{c:Math.floor(col),r:Math.floor(row)};
+}
+function inG(c,r){return c>=0&&c<GW&&r>=0&&r<GH;}
+
+// ═══════════════════════════════════════════
+// RENDER PRIMITIVES
+// ═══════════════════════════════════════════
+function tile(c,r,fill,stroke){
+  var p=iso(c,r);
+  cx.beginPath();
+  cx.moveTo(p.x,        p.y);
+  cx.lineTo(p.x+CELL/2, p.y+CELL/4);
+  cx.lineTo(p.x,        p.y+CELL/2);
+  cx.lineTo(p.x-CELL/2, p.y+CELL/4);
+  cx.closePath();
+  cx.fillStyle=fill; cx.fill();
+  if(stroke){cx.strokeStyle=stroke;cx.lineWidth=.6;cx.stroke();}
+}
+
+function box(c,r,w,h,floors,wL,wR,rf,highlight){
+  var TH=floors*18;
+  var co=[iso(c,r),iso(c+w,r),iso(c+w,r+h),iso(c,r+h)];
+  // Roof
+  cx.beginPath();
+  cx.moveTo(co[0].x,co[0].y-TH);cx.lineTo(co[1].x,co[1].y-TH);
+  cx.lineTo(co[2].x,co[2].y-TH);cx.lineTo(co[3].x,co[3].y-TH);
+  cx.closePath();cx.fillStyle=rf;cx.fill();
+  // Left wall
+  cx.beginPath();
+  cx.moveTo(co[3].x,co[3].y-TH);cx.lineTo(co[2].x,co[2].y-TH);
+  cx.lineTo(co[2].x,co[2].y);cx.lineTo(co[3].x,co[3].y);
+  cx.closePath();cx.fillStyle=wL;cx.fill();
+  // Right wall
+  cx.beginPath();
+  cx.moveTo(co[2].x,co[2].y-TH);cx.lineTo(co[1].x,co[1].y-TH);
+  cx.lineTo(co[1].x,co[1].y);cx.lineTo(co[2].x,co[2].y);
+  cx.closePath();cx.fillStyle=wR;cx.fill();
+  // Windows (simple)
+  if(floors>2){
+    var rows=Math.min(floors,12), cols=Math.max(1,Math.floor(w*2));
+    var winH=TH/(rows+1);
+    for(var wr2=1;wr2<=rows;wr2++){
+      for(var wc2=0;wc2<cols;wc2++){
+        if((wr2+wc2)%2===0) continue;
+        var wy=co[2].y-TH+wr2*winH;
+        // right wall windows
+        var wx2=co[2].x+(co[1].x-co[2].x)*(wc2+0.5)/cols;
+        var wwy=co[2].y-TH+wr2*winH+(co[1].y-co[2].y)*(wc2+0.5)/cols;
+        cx.fillStyle='rgba(180,220,255,0.22)';
+        cx.fillRect(wx2-2,wwy-2,4,4);
+      }
+    }
+  }
+  // Outline
+  cx.strokeStyle='rgba(0,0,0,0.45)';cx.lineWidth=.8;
+  cx.beginPath();
+  cx.moveTo(co[0].x,co[0].y-TH);cx.lineTo(co[1].x,co[1].y-TH);
+  cx.lineTo(co[2].x,co[2].y-TH);cx.lineTo(co[3].x,co[3].y-TH);cx.closePath();cx.stroke();
+  cx.beginPath();cx.moveTo(co[3].x,co[3].y-TH);cx.lineTo(co[3].x,co[3].y);cx.stroke();
+  cx.beginPath();cx.moveTo(co[2].x,co[2].y-TH);cx.lineTo(co[2].x,co[2].y);cx.stroke();
+  cx.beginPath();cx.moveTo(co[1].x,co[1].y-TH);cx.lineTo(co[1].x,co[1].y);cx.stroke();
+  // Highlight glow
+  if(highlight){
+    cx.beginPath();
+    cx.moveTo(co[0].x,co[0].y-TH);cx.lineTo(co[1].x,co[1].y-TH);
+    cx.lineTo(co[2].x,co[2].y-TH);cx.lineTo(co[3].x,co[3].y-TH);cx.closePath();
+    cx.strokeStyle='rgba(212,160,23,0.9)';cx.lineWidth=2;cx.stroke();
+  }
+}
+
+function dk(hex,a){
+  var c=parseInt(hex.replace('#',''),16);
+  var r=Math.max(0,((c>>16)&255)-a);
+  var g=Math.max(0,((c>>8)&255)-a);
+  var b=Math.max(0,(c&255)-a);
+  return 'rgb('+r+','+g+','+b+')';
+}
+function lt(hex,a){
+  var c=parseInt(hex.replace('#',''),16);
+  var r=Math.min(255,((c>>16)&255)+a);
+  var g=Math.min(255,((c>>8)&255)+a);
+  var b=Math.min(255,(c&255)+a);
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+// ═══════════════════════════════════════════
+// ROAD PATTERN
+// ═══════════════════════════════════════════
+// Roads every 5 cells: 0,5,10,15,20,25,30,35,39
+function isRoad(c,r){
+  return c%5===0||r%5===0||c===GW-1||r===GH-1;
+}
+
+// ═══════════════════════════════════════════
+// DRAW GROUND
+// ═══════════════════════════════════════════
+// Precompute visible tile range based on camera
+function drawGround(){
+  var even,rd,col,str;
+  for(var c=0;c<GW;c++){
+    for(var r=0;r<GH;r++){
+      // Viewport cull
+      var p=iso(c+0.5,r+0.5);
+      if(p.x<-CELL||p.x>cv.width+CELL||p.y<-CELL||p.y>cv.height+CELL) continue;
+
+      rd=isRoad(c,r);
+      even=(c+r)%2===0;
+      if(rd){col='#0d1019';str='#151b24';}
+      else{col=even?'#0f1522':'#0d1320';str='#111927';}
+      tile(c,r,col,str);
+
+      // Road centre dashes
+      if(rd&&(c+r)%3===0){
+        var p2=iso(c+0.5,r+0.5);
+        cx.fillStyle='rgba(255,255,180,0.06)';
+        cx.fillRect(p2.x-2,p2.y-1,4,2);
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// DRAW BUILDINGS
+// ═══════════════════════════════════════════
+function drawBuildings(){
+  var sorted=owned.slice().sort(function(a,b){return(a.x+a.y)-(b.x+b.y);});
+  var t=Date.now();
+  sorted.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    var hov=hovered&&hovered.id===b.id;
+    // Viewport cull
+    var p=iso(b.x+a.w/2,b.y+a.h/2);
+    if(p.x<-200||p.x>cv.width+200||p.y<-a.floors*18-50||p.y>cv.height+100) return;
+
+    box(b.x,b.y,a.w,a.h,a.floors,dk(a.color,25),dk(a.color,45),
+        hov?lt(a.roof,30):a.roof, hov);
+
+    // Icon
+    cx.font='12px serif';cx.textAlign='center';
+    var ip=iso(b.x+a.w/2,b.y+a.h/2);
+    cx.fillText(a.icon,ip.x,ip.y-a.floors*18-12);
+
+    // Customer dots
+    var dc=b.custCur,dm=b.custMax;
+    var dotX=ip.x-(dm-1)*4.5;
+    for(var d=0;d<Math.min(dm,8);d++){
+      cx.beginPath();
+      cx.arc(dotX+d*9,ip.y-a.floors*18-2,2.5,0,Math.PI*2);
+      cx.fillStyle=d<dc?'#22c55e':'rgba(255,255,255,0.08)';cx.fill();
+    }
+
+    // Income pulse when customer arrives
+    if(b.pulseTick&&b.pulseTick>t-800){
+      cx.font='bold 10px Tajawal';
+      cx.fillStyle='rgba(34,197,94,'+(1-(t-b.pulseTick)/800)+')';
+      cx.fillText('+$'+fmt(b.lastPulse),ip.x,ip.y-a.floors*18-28-(t-b.pulseTick)/60);
+    }
+  });
+}
+
+function drawConstructing(){
+  constructing.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    var p=iso(b.x+a.w/2,b.y+a.h/2);
+    if(p.x<-200||p.x>cv.width+200) return;
+    var pct=b.prog/b.total;
+    var curFloors=Math.max(0.4,a.floors*pct);
+    box(b.x,b.y,a.w,a.h,curFloors,'#6b5020','#4a3810','#8a6828',false);
+    // Bar
+    var bW=CELL*a.w*0.45;
+    var bY=p.y-curFloors*18-16;
+    cx.fillStyle='rgba(0,0,0,0.55)';cx.beginPath();cx.roundRect(p.x-bW/2,bY,bW,5,2);cx.fill();
+    cx.fillStyle='#38bdf8';cx.beginPath();cx.roundRect(p.x-bW/2,bY,bW*pct,5,2);cx.fill();
+    cx.font='9px Tajawal';cx.textAlign='center';cx.fillStyle='#e2d5b8';
+    cx.fillText(Math.floor(pct*100)+'%',p.x,bY-3);
+  });
+}
+
+// ═══════════════════════════════════════════
+// NPC CUSTOMERS
+// ═══════════════════════════════════════════
+var NPC_COL=['#f87171','#60a5fa','#4ade80','#fbbf24','#c084fc','#fb923c','#a3e635','#22d3ee'];
+
+function spawnNPCs(){
+  if(!owned.length) return;
+  owned.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    var maxC=a.cust+Math.floor(b.lv*0.8);
+    if(b.custCur>=maxC) return;
+    if(Math.random()>0.35) return;
+    var edge=Math.floor(Math.random()*4);
+    var sg;
+    if(edge===0) sg=iso(0,Math.random()*GH);
+    else if(edge===1) sg=iso(GW,Math.random()*GH);
+    else if(edge===2) sg=iso(Math.random()*GW,0);
+    else sg=iso(Math.random()*GW,GH);
+    var ep=iso(b.x+a.w/2,b.y+a.h);
+    npcs.push({
+      x:sg.x,y:sg.y,tx:ep.x,ty:ep.y-6,
+      tb:b,col:NPC_COL[Math.floor(Math.random()*NPC_COL.length)],
+      sz:3+Math.random()*2,state:'walk',timer:0,
+      maxT:50+Math.floor(Math.random()*100)
+    });
+    b.custCur++;
+  });
+}
+
+function updateNPCs(dt){
+  var spd=55*dt*gameSpeed;
+  for(var i=npcs.length-1;i>=0;i--){
+    var n=npcs[i];
+    if(n.state==='walk'){
+      var dx=n.tx-n.x,dy=n.ty-n.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<4){
+        n.state='shop';n.timer=0;
+        // Pulse income
+        var pa=ASSETS[n.tb.assetId];
+        var pulse=Math.floor(pa.inc*0.15*n.tb.lv);
+        money+=pulse;
+        n.tb.pulseTick=Date.now();n.tb.lastPulse=pulse;
+      } else {
+        n.x+=dx/d*spd*0.75;
+        n.y+=dy/d*spd*0.75+Math.sin(Date.now()*0.012+i)*0.25;
+      }
+    } else if(n.state==='shop'){
+      n.timer++;
+      if(n.timer>n.maxT){
+        n.state='leave';
+        var lp=iso(Math.random()<.5?0:GW,Math.random()<.5?0:GH);
+        n.tx=lp.x;n.ty=lp.y;
+      }
+    } else {
+      var dx2=n.tx-n.x,dy2=n.ty-n.y,d2=Math.sqrt(dx2*dx2+dy2*dy2);
+      if(d2<8){
+        if(n.tb) n.tb.custCur=Math.max(0,n.tb.custCur-1);
+        npcs.splice(i,1);
+      } else {
+        n.x+=dx2/d2*spd;n.y+=dy2/d2*spd;
+      }
+    }
+  }
+}
+
+function drawNPCs(){
+  npcs.forEach(function(n){
+    cx.beginPath();cx.ellipse(n.x,n.y+n.sz,n.sz*.6,n.sz*.25,0,0,Math.PI*2);
+    cx.fillStyle='rgba(0,0,0,0.2)';cx.fill();
+    cx.beginPath();cx.arc(n.x,n.y,n.sz,0,Math.PI*2);
+    cx.fillStyle=n.col;cx.fill();
+    if(n.state==='shop'){
+      cx.font='7px serif';cx.textAlign='center';
+      cx.fillText('🛍️',n.x,n.y-n.sz-1);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════
+// GHOST PREVIEW
+// ═══════════════════════════════════════════
+function drawGhost(){
+  if(selAsset<0) return;
+  var a=ASSETS[selAsset];
+  var c=mouseGC.c,r=mouseGC.r;
+  if(!inG(c,r)||!inG(c+a.w-1,r+a.h-1)) return;
+  var ok=canPlace(c,r,a.w,a.h);
+  var al=0.45+Math.sin(Date.now()*.005)*.15;
+  cx.globalAlpha=al;
+  box(c,r,a.w,a.h,a.floors,
+    ok?'rgba(34,197,94,.5)':'rgba(239,68,68,.5)',
+    ok?'rgba(34,197,94,.35)':'rgba(239,68,68,.35)',
+    ok?'rgba(74,222,128,.6)':'rgba(252,165,165,.6)',false);
+  cx.globalAlpha=1;
+}
+
+function canPlace(c,r,w,h){
+  for(var dc=0;dc<w;dc++) for(var dr=0;dr<h;dr++){
+    if(!inG(c+dc,r+dr)) return false;
+    if(grid[c+dc][r+dr]!==null) return false;
+    if(isRoad(c+dc,r+dr)) return false;
+  }
+  return true;
+}
+
+// ═══════════════════════════════════════════
+// POPUP
+// ═══════════════════════════════════════════
+function drawPopup(){
+  if(!popup) return;
+  var b=popup.b,a=ASSETS[b.assetId];
+  var W=190,H=120;
+  var px=Math.min(popup.sx+12,cv.width-W-4);
+  var py=Math.max(4,Math.min(popup.sy-60,cv.height-H-4));
+  cx.fillStyle='rgba(7,9,15,.97)';
+  cx.strokeStyle='rgba(212,160,23,.35)';cx.lineWidth=1;
+  cx.beginPath();cx.roundRect(px,py,W,H,8);cx.fill();cx.stroke();
+  cx.textAlign='left';
+  cx.font='bold 13px Tajawal';cx.fillStyle='#ddd0b0';
+  cx.fillText(a.icon+' '+a.name,px+10,py+20);
+  cx.font='11px Tajawal';cx.fillStyle='#5a5440';
+  cx.fillText('Lv.'+b.lv+' • +$'+fmt(b.inc)+'/ث • '+b.custCur+' زبائن',px+10,py+36);
+
+  var uc=UPG.cost(a.cost,b.lv),ok=money>=uc;
+  var ni=Math.floor(a.inc*UPG.mult(b.lv+1));
+  cx.fillStyle=ok?'rgba(212,160,23,.12)':'rgba(255,255,255,.04)';
+  cx.beginPath();cx.roundRect(px+7,py+46,W-14,26,5);cx.fill();
+  cx.font='bold 11px Tajawal';cx.fillStyle=ok?'#d4a017':'#444';
+  cx.textAlign='center';
+  cx.fillText('⬆️ Lv.'+(b.lv+1)+' — $'+fmt(uc)+' → +$'+fmt(ni)+'/ث',px+W/2,py+63);
+
+  var sv=Math.floor(a.cost*.35);
+  cx.fillStyle='rgba(239,68,68,.1)';
+  cx.beginPath();cx.roundRect(px+7,py+77,W-14,22,5);cx.fill();
+  cx.fillStyle='#ef4444';
+  cx.fillText('🗑️ بيع بـ $'+fmt(sv),px+W/2,py+92);
+
+  popup.W=W;popup.H=H;popup.px=px;popup.py=py;
+  popup.uR={x:px+7,y:py+46,w:W-14,h:26};
+  popup.sR={x:px+7,y:py+77,w:W-14,h:22};
+}
+
+// ═══════════════════════════════════════════
+// MINIMAP
+// ═══════════════════════════════════════════
+function drawMinimap(){
+  var mc=document.getElementById('mc'),mctx=mc.getContext('2d'),MS=130;
+  var SC=MS/Math.max(GW,GH);
+  mctx.fillStyle='#050710';mctx.fillRect(0,0,MS,MS);
+  // Roads
+  mctx.fillStyle='rgba(255,255,255,0.05)';
+  for(var c2=0;c2<GW;c2++) for(var r2=0;r2<GH;r2++){
+    if(isRoad(c2,r2)) mctx.fillRect(c2*SC,r2*SC,SC,SC);
+  }
+  // Buildings
+  owned.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    mctx.fillStyle='#22c55e';
+    mctx.fillRect(b.x*SC+1,b.y*SC+1,a.w*SC-1,a.h*SC-1);
+  });
+  constructing.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    mctx.fillStyle='#38bdf8';
+    mctx.fillRect(b.x*SC+1,b.y*SC+1,a.w*SC-1,a.h*SC-1);
+  });
+  // Viewport rect
+  var vTL=s2g(0,0),vBR=s2g(cv.width,cv.height);
+  mctx.strokeStyle='rgba(212,160,23,.5)';mctx.lineWidth=1;
+  mctx.strokeRect(vTL.c*SC,vTL.r*SC,(vBR.c-vTL.c)*SC,(vBR.r-vTL.r)*SC);
+}
+
+// ═══════════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════════
+var lastF=0,npcT=0;
+function loop(ts){
+  requestAnimationFrame(loop);
+  var dt=Math.min((ts-lastF)/1000,.05);lastF=ts;frameN++;
+  npcT+=dt*gameSpeed;if(npcT>.6){spawnNPCs();npcT=0;}
+  updateNPCs(dt);
+
+  cx.clearRect(0,0,cv.width,cv.height);
+  // Sky
+  var g=cx.createLinearGradient(0,0,0,cv.height);
+  g.addColorStop(0,'#060a14');g.addColorStop(1,'#0c1828');
+  cx.fillStyle=g;cx.fillRect(0,0,cv.width,cv.height);
+
+  drawGround();
+  drawConstructing();
+  drawBuildings();
+  drawGhost();
+  drawNPCs();
+  drawPopup();
+  if(frameN%4===0) drawMinimap();
+}
+
+// ═══════════════════════════════════════════
+// TICKS
+// ═══════════════════════════════════════════
+setInterval(function(){
+  if(income>0){money+=income*gameSpeed;updateHUD();}
+  // Construction
+  var done=[];
+  constructing=constructing.filter(function(b){
+    b.prog+=gameSpeed;
+    if(b.prog>=b.total){done.push(b);return false;}
+    return true;
+  });
+  done.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    for(var dc=0;dc<a.w;dc++) for(var dr=0;dr<a.h;dr++) grid[b.x+dc][b.y+dr]=b.id;
+    owned.push({id:b.id,assetId:b.assetId,lv:1,x:b.x,y:b.y,
+      inc:a.inc,custMax:a.cust,custCur:0,pulseTick:0,lastPulse:0});
+    income+=a.inc;xp+=Math.floor(a.cost*.4);
+    updateLv();updateHUD();updatePortUI();
+    toast('✅ '+a.icon+' '+a.name+' اكتمل! +$'+fmt(a.inc)+'/ث','ok');
+  });
+  if(done.length) updateBuildUI();
+  updateBuildUI();
+},1000);
+
+// ═══════════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════════
+cv.addEventListener('mousedown',function(e){
+  if(e.button===2||e.button===1){
+    isDrag=true;dSX=e.clientX;dSY=e.clientY;dCX=camX;dCY=camY;return;
+  }
+  var rect=cv.getBoundingClientRect();
+  var sx=e.clientX-rect.left,sy=e.clientY-rect.top;
+  // Popup buttons
+  if(popup){
+    if(inR(sx,sy,popup.uR)){doUpgrade(popup.b);popup=null;return;}
+    if(inR(sx,sy,popup.sR)){doSell(popup.b);popup=null;return;}
+    popup=null;return;
+  }
+  // Build mode
+  if(selAsset>=0){
+    var a=ASSETS[selAsset];
+    var gc2=s2g(sx,sy);
+    if(canPlace(gc2.c,gc2.r,a.w,a.h)){
+      if(money<a.cost){toast('لا يكفي المال! تحتاج $'+fmt(a.cost),'err');return;}
+      money-=a.cost;
+      var bid=nextId++;
+      for(var dc=0;dc<a.w;dc++) for(var dr=0;dr<a.h;dr++) grid[gc2.c+dc][gc2.r+dr]='b';
+      constructing.push({assetId:selAsset,x:gc2.c,y:gc2.r,prog:0,total:a.bt,id:bid});
+      selAsset=-1;updateShopUI();updateHUD();tab('build');
+      toast('🏗️ بدأ '+a.icon+' '+a.name+' — '+a.bt+'ث','info');
+    } else toast('لا يمكن البناء هنا!','err');
+    return;
+  }
+  // Click building
+  var hit=getBAt(sx,sy);
+  if(hit) popup={b:hit,sx:sx,sy:sy};
+  else popup=null;
+});
+
+cv.addEventListener('mousemove',function(e){
+  if(isDrag){
+    camX=dCX+(e.clientX-dSX);
+    camY=dCY+(e.clientY-dSY);
+    return;
+  }
+  var rect=cv.getBoundingClientRect();
+  mouseGC=s2g(e.clientX-rect.left,e.clientY-rect.top);
+  hovered=getBAt(e.clientX-rect.left,e.clientY-rect.top);
+  cv.style.cursor=(hovered||selAsset>=0)?'pointer':(isDrag?'grabbing':'grab');
+});
+
+cv.addEventListener('mouseup',function(e){if(e.button===2||e.button===1)isDrag=false;});
+cv.addEventListener('mouseleave',function(){isDrag=false;});
+cv.addEventListener('contextmenu',function(e){e.preventDefault();selAsset=-1;popup=null;updateShopUI();});
+
+// Touch
+var tSX=0,tSY=0,tCX=0,tCY=0,tMoved=false;
+cv.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  var t=e.touches[0];tSX=t.clientX;tSY=t.clientY;tCX=camX;tCY=camY;tMoved=false;
+},{passive:false});
+cv.addEventListener('touchmove',function(e){
+  e.preventDefault();
+  var t=e.touches[0];
+  var dx=t.clientX-tSX,dy=t.clientY-tSY;
+  if(Math.abs(dx)>6||Math.abs(dy)>6){tMoved=true;camX=tCX+dx;camY=tCY+dy;}
+},{passive:false});
+cv.addEventListener('touchend',function(e){
+  e.preventDefault();
+  if(!tMoved){
+    var t=e.changedTouches[0];
+    var fe=new MouseEvent('mousedown',{clientX:t.clientX,clientY:t.clientY,button:0});
+    cv.dispatchEvent(fe);
+  }
+},{passive:false});
+
+// Mouse wheel zoom
+cv.addEventListener('wheel',function(e){
+  e.preventDefault();
+  var factor=e.deltaY>0?0.9:1.11;
+  var newCell=Math.max(32,Math.min(100,CELL*factor));
+  // adjust camX/Y to zoom toward mouse
+  var rect=cv.getBoundingClientRect();
+  var mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  var gc3=s2g(mx,my);
+  CELL=newCell;
+  var newP=iso(gc3.c,gc3.r);
+  camX+=mx-newP.x;camY+=my-newP.y;
+},{passive:false});
+
+function inR(x,y,r){return r&&x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h;}
+
+function getBAt(sx,sy){
+  for(var i=owned.length-1;i>=0;i--){
+    var b=owned[i],a=ASSETS[b.assetId];
+    var TH=a.floors*18;
+    var co=[iso(b.x,b.y),iso(b.x+a.w,b.y),iso(b.x+a.w,b.y+a.h),iso(b.x,b.y+a.h)];
+    var minX=Math.min(co[0].x,co[1].x,co[2].x,co[3].x);
+    var maxX=Math.max(co[0].x,co[1].x,co[2].x,co[3].x);
+    var minY=Math.min(co[0].y,co[1].y)-TH;
+    var maxY=Math.max(co[2].y,co[3].y);
+    if(sx>=minX&&sx<=maxX&&sy>=minY&&sy<=maxY) return b;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════
+function doUpgrade(b){
+  var a=ASSETS[b.assetId];
+  var uc=UPG.cost(a.cost,b.lv);
+  if(money<uc){toast('لا يكفي المال!','err');return;}
+  money-=uc;
+  var old=b.inc;b.lv++;
+  b.inc=Math.floor(a.inc*UPG.mult(b.lv));
+  b.custMax=a.cust+Math.floor(b.lv*.8);
+  income+=(b.inc-old);xp+=Math.floor(uc*.4);
+  updateLv();updateHUD();updatePortUI();
+  toast('⬆️ '+a.icon+' '+a.name+' → Lv.'+b.lv+'! +$'+fmt(b.inc)+'/ث','ok');
+}
+
+function doSell(b){
+  var a=ASSETS[b.assetId];
+  var sv=Math.floor(a.cost*.35);
+  money+=sv;income=Math.max(0,income-b.inc);
+  for(var dc=0;dc<a.w;dc++) for(var dr=0;dr<a.h;dr++) grid[b.x+dc][b.y+dr]=null;
+  npcs=npcs.filter(function(n){return n.tb.id!==b.id;});
+  owned=owned.filter(function(o){return o.id!==b.id;});
+  updateHUD();updatePortUI();
+  toast('💸 بيع بـ $'+fmt(sv),'info');
+}
+
+function cycleSpeed(){
+  gameSpeed=gameSpeed===1?2:gameSpeed===2?4:1;
+  document.getElementById('spd').textContent='⏩ ×'+gameSpeed;
+}
+
+// ═══════════════════════════════════════════
+// HUD
+// ═══════════════════════════════════════════
+function updateHUD(){
+  document.getElementById('mv').textContent='$'+fmt(Math.floor(money));
+  document.getElementById('iv').textContent='+$'+fmt(income)+'/ث';
+  document.getElementById('pv').textContent=owned.length;
+}
+function updateLv(){
+  var lv=0;
+  for(var i=LEVELS.length-1;i>=0;i--) if(xp>=LEVELS[i].xp){lv=i;break;}
+  gLv=lv+1;
+  var cur=LEVELS[lv],nx=LEVELS[lv+1]||{xp:cur.xp*5};
+  var pct=Math.min(100,((xp-cur.xp)/(nx.xp-cur.xp))*100);
+  document.getElementById('lv').textContent='Lv.'+gLv+' '+cur.n;
+  document.getElementById('xpf').style.width=pct+'%';
+  updateShopUI();
+}
+function canU(a){return gLv>=a.lv;}
+function fmt(n){
+  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
+  return Math.floor(n).toLocaleString();
+}
+
+// ═══════════════════════════════════════════
+// PANEL UI
+// ═══════════════════════════════════════════
+function tab(name){
+  document.querySelectorAll('.ptab').forEach(function(t,i){
+    t.classList.toggle('on',['shop','port','build'][i]===name);
+  });
+  document.querySelectorAll('.pcon').forEach(function(c){c.classList.remove('on');});
+  document.getElementById('t-'+name).classList.add('on');
+  if(name==='port') updatePortUI();
+  if(name==='build') updateBuildUI();
+}
+
+function updateShopUI(){
+  var el=document.getElementById('t-shop');el.innerHTML='';
+  var lastCat=-1;
+  ASSETS.forEach(function(a,idx){
+    if(a.cat!==lastCat){
+      lastCat=a.cat;
+      var ch=document.createElement('div');
+      ch.className='cat';ch.textContent=CATS[a.cat];
+      el.appendChild(ch);
+    }
+    var lk=!canU(a),aff=money>=a.cost;
+    var div=document.createElement('div');
+    div.className='sc'+(lk?' lk':'')+(selAsset===idx?' sel':'');
+    div.innerHTML=
+      '<div class="sc-t"><div class="sc-i">'+a.icon+'</div>'+
+      '<div><div class="sc-n">'+a.name+'</div>'+
+      '<div class="sc-s">'+a.w+'×'+a.h+' • '+a.floors+' طابق</div></div></div>'+
+      '<div class="sc-r">'+
+      '<span class="sc-cost" style="color:'+(aff?'var(--gold)':'var(--red)')+'">$'+fmt(a.cost)+'</span>'+
+      '<span class="sc-inc">+$'+fmt(a.inc)+'/ث</span>'+
+      '<span class="sc-time">'+a.bt+'ث</span></div>'+
+      (lk?'<div class="lktag">🔒 Lv.'+a.lv+'</div>':'');
+    if(!lk){
+      (function(i,asset){
+        div.onclick=function(){
+          selAsset=i;popup=null;updateShopUI();
+          document.getElementById('tip').textContent=
+            'انقر على أرض خضراء لوضع '+asset.icon+' '+asset.name+' • كليك يمين للإلغاء';
+        };
+      })(idx,a);
+    }
+    el.appendChild(div);
+  });
+}
+
+function updatePortUI(){
+  var el=document.getElementById('t-port');
+  if(!owned.length){
+    el.innerHTML='<div class="empty">لا توجد عقارات بعد.<br>ابدأ ببناء أول مشروع!<br><small style="opacity:.5">ابدأ من كوخ 🛖 أو بقالة 🛒</small></div>';
+    return;
+  }
+  el.innerHTML='';
+  // Sort by income desc
+  var sorted=owned.slice().sort(function(a,b){return b.inc-a.inc;});
+  sorted.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    var uc=UPG.cost(a.cost,b.lv),ni=Math.floor(a.inc*UPG.mult(b.lv+1)),ok=money>=uc;
+    var div=document.createElement('div');div.className='pc';
+    div.innerHTML=
+      '<div class="pc-t"><div style="font-size:1.1rem">'+a.icon+'</div>'+
+      '<div class="pc-n">'+a.name+'<br><span style="font-size:.58rem;color:var(--dim)">Lv.'+b.lv+' • '+b.custCur+'/'+b.custMax+' زبون</span></div>'+
+      '<div class="pc-i">+$'+fmt(b.inc)+'/ث</div></div>'+
+      '<div class="lb"><div class="lf" style="width:'+Math.min(100,b.lv*10)+'%"></div></div>'+
+      '<button class="ub"'+(ok?'':' disabled')+' onclick="doUpgIdx(\''+b.id+'\')">'+
+      '⬆️ Lv.'+(b.lv+1)+' $'+fmt(uc)+' → +$'+fmt(ni)+'/ث</button>';
+    el.appendChild(div);
+  });
+}
+function doUpgIdx(id){
+  var b=owned.find(function(o){return o.id==id;});if(b)doUpgrade(b);updatePortUI();
+}
+
+function updateBuildUI(){
+  var el=document.getElementById('t-build');
+  if(!constructing.length){
+    el.innerHTML='<div class="empty">لا يوجد بناء جارٍ<br>اختر مشروعاً وابنِه!</div>';return;
+  }
+  el.innerHTML='';
+  constructing.forEach(function(b){
+    var a=ASSETS[b.assetId];
+    var pct=Math.min(100,Math.floor(b.prog/b.total*100));
+    var rem=Math.max(0,Math.ceil((b.total-b.prog)/gameSpeed));
+    var div=document.createElement('div');div.className='bc';
+    div.innerHTML=
+      '<div class="bc-t"><div style="font-size:1.1rem">'+a.icon+'</div>'+
+      '<div class="bc-n">'+a.name+'</div><div class="bc-p">'+pct+'%</div></div>'+
+      '<div class="bb"><div class="bf" style="width:'+pct+'%"></div></div>'+
+      '<div class="bc-r">⏱️ متبقي '+rem+'ث</div>';
+    el.appendChild(div);
+  });
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function toast(msg,type){
+  var s=document.getElementById('toasts');
+  var e=document.createElement('div');e.className='toast '+(type||'ok');e.textContent=msg;
+  s.prepend(e);
+  setTimeout(function(){e.style.transition='opacity .4s';e.style.opacity='0';setTimeout(function(){e.remove();},420);},3000);
+  while(s.children.length>5)s.lastChild.remove();
+}
+
+// ═══════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════
+updateHUD();updateShopUI();updatePortUI();updateBuildUI();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
