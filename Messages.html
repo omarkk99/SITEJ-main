@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الرسائل | SITEJ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--navy:#1a2942;--navy2:#3d5a7f;--blue:#4a90e2;--blue2:#6fa8ec;--teal:#20c997;--red:#ee5a6f;--bg:#f0f4f8;--card:#fff;--border:rgba(74,144,226,.2);--txt:#0a1628;--gray:#6b7c93}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);display:flex;flex-direction:column}
+.top{background:linear-gradient(135deg,#152035,#1e3d6e);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.top h1{font-size:1.1rem;font-weight:900;flex:1;display:flex;align-items:center;gap:9px}
+.top h1 i{color:#87ceeb}
+.pill{background:rgba(255,255,255,.14);border-radius:50px;padding:4px 13px;font-size:.78rem;font-weight:700}
+.top a{color:#fff;text-decoration:none;font-size:.85rem;font-weight:700;background:rgba(255,255,255,.12);padding:7px 14px;border-radius:10px}
+main{flex:1;display:flex;min-height:0;max-width:1150px;width:100%;margin:0 auto;background:var(--card);border-inline:1px solid var(--border)}
+#side{width:310px;border-inline-end:1px solid var(--border);display:flex;flex-direction:column}
+#q{margin:12px;padding:10px 14px;border:2px solid var(--border);border-radius:50px;font-family:inherit;font-size:.88rem;outline:none}
+#q:focus{border-color:var(--blue)}
+#list{flex:1;overflow:auto}
+.grp{padding:7px 14px;font-size:.72rem;font-weight:800;color:var(--gray);background:var(--bg);letter-spacing:1px}
+.ct{display:flex;gap:11px;align-items:center;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:.2s}
+.ct:hover,.ct.on{background:rgba(74,144,226,.09)}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#87ceeb);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.av.t{background:linear-gradient(135deg,#8b5cf6,#6366f1)}.av.s{background:linear-gradient(135deg,var(--teal),var(--blue))}.av.a{background:linear-gradient(135deg,#1a2942,#3d5a7f)}
+.ci{flex:1;min-width:0}.ci b{display:block;font-size:.88rem}.ci small{color:var(--gray);display:block;font-size:.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unr{background:var(--red);color:#fff;border-radius:50px;min-width:22px;height:22px;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 6px}
+#chat{flex:1;display:flex;flex-direction:column;min-width:0}
+#hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-weight:800;color:var(--navy);min-height:56px}
+#hd small{color:var(--gray);font-weight:600}
+#back{display:none;background:none;border:none;font-size:1.1rem;color:var(--navy);cursor:pointer}
+#th{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:8px;background:#f7f9fc}
+.m{max-width:74%;padding:9px 14px;border-radius:16px;background:#fff;border:1px solid var(--border);line-height:1.7;overflow-wrap:anywhere;white-space:pre-wrap;font-size:.92rem}
+.m.me{align-self:flex-start;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none}
+.m time{display:block;font-size:.68rem;opacity:.65;margin-top:2px}
+.empty{margin:auto;text-align:center;color:var(--gray);padding:30px;line-height:2}
+.empty i{font-size:2.6rem;opacity:.3;display:block;margin-bottom:8px}
+#cp{display:flex;gap:9px;padding:12px;border-top:1px solid var(--border)}
+#tx{flex:1;resize:none;height:46px;padding:11px 14px;border:2px solid var(--border);border-radius:14px;font-family:inherit;font-size:.92rem;outline:none}
+#tx:focus{border-color:var(--blue)}
+#send{border:none;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-radius:14px;padding:0 22px;font-family:inherit;font-weight:800;cursor:pointer}
+#send:disabled{opacity:.5}
+#ld{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--blue);z-index:9}
+@media(max-width:760px){#side{width:100%}#chat{display:none}main.t #side{display:none}main.t #chat{display:flex}#back{display:block}.m{max-width:86%}}
+</style>
+</head>
+<body>
+<div id="ld"><i class="fas fa-spinner fa-spin" style="margin-left:8px"></i> جارٍ التحميل...</div>
+<div class="top"><h1><i class="fas fa-comments"></i> الرسائل</h1><span class="pill" id="me"></span><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></div>
+<main id="main">
+ <div id="side"><input id="q" placeholder="🔍 ابحث عن شخص..." oninput="render()"><div id="list"></div></div>
+ <section id="chat">
+  <div id="hd"><button id="back" onclick="closeChat()"><i class="fas fa-arrow-right"></i></button><span id="who"></span></div>
+  <div id="th"></div>
+  <div id="cp" hidden><textarea id="tx" placeholder="اكتب رسالتك..." maxlength="1500"></textarea><button id="send">إرسال</button></div>
+ </section>
+</main>
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import {getFirestore,collection,getDocs,getDoc,doc,addDoc,updateDoc,query,where,onSnapshot,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+const app=initializeApp({apiKey:"AIzaSyDJRA6KpLir1Jo-oVqqAANOglWEBXXn8oA",authDomain:"eliteacademy-37bfc.firebaseapp.com",projectId:"eliteacademy-37bfc",storageBucket:"eliteacademy-37bfc.firebasestorage.app",messagingSenderId:"203080953628",appId:"1:203080953628:web:69efebccc336b79f0554d9"});
+const auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);
+const ROLE={principal:'مدير',vice_principal:'مساعد المدير',teacher:'أستاذ',student:'طالب'};
+const isAdm=r=>r==='principal'||r==='vice_principal';
+const key=s=>String(s.grade||'')+String(s.class||s.section||'');
+let me,contacts=[],msgs=new Map(),cur=null,marked=new Set();
+
+// ── قاعدة الصلاحيات: المدير/مساعده مع الجميع، الأستاذ مع طلاب صفوفه فقط، الطالب مع أساتذة صفه + الإدارة ──
+function ok(c){
+  if(isAdm(me.role)||isAdm(c.role))return true;
+  if(me.role==='teacher'&&c.role==='student')return (me.classes||[]).includes(c.key);
+  if(me.role==='student'&&c.role==='teacher')return (c.classes||[]).includes(me.key);
+  return false;
+}
+const ts=m=>m.createdAt?.toMillis?m.createdAt.toMillis():(m.createdAt?.seconds?m.createdAt.seconds*1000:Date.now());
+const ini=s=>(s||'؟').trim().charAt(0);
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function convo(id){return [...msgs.values()].filter(m=>(m.from===me.id&&m.to===id)||(m.from===id&&m.to===me.id)).sort((a,b)=>ts(a)-ts(b))}
+
+window.render=function(){
+  const q=$('q').value.trim().toLowerCase(),L=$('list');L.textContent='';
+  const rows=contacts.filter(c=>!q||c.name.toLowerCase().includes(q)).map(c=>{const cv=convo(c.id);return{c,last:cv[cv.length-1],unr:cv.filter(m=>m.to===me.id&&m.read===false).length}})
+   .sort((a,b)=>(b.last?ts(b.last):0)-(a.last?ts(a.last):0)||a.c.name.localeCompare(b.c.name,'ar'));
+  if(!rows.length)L.append(el('div','empty','لا توجد جهات اتصال متاحة'));
+  const groups=[['principal','الإدارة'],['teacher','الأساتذة'],['student','الطلاب']];
+  groups.forEach(([g,label])=>{
+    const rs=rows.filter(r=>(isAdm(r.c.role)?'principal':r.c.role)===g);if(!rs.length)return;
+    L.append(el('div','grp',label));
+    rs.forEach(({c,last,unr})=>{
+      const d=el('div','ct'+(cur===c.id?' on':''));
+      d.append(el('div','av '+(c.role==='student'?'s':c.role==='teacher'?'t':'a'),ini(c.name)));
+      const i=el('div','ci');i.append(el('b','',c.name));
+      i.append(el('small','',last?(last.from===me.id?'أنت: ':'')+(last.message||last.text||''):ROLE[c.role]+(c.sub?' · '+c.sub:'')));
+      d.append(i);if(unr)d.append(el('span','unr',unr));
+      d.onclick=()=>{cur=c.id;$('main').classList.add('t');render()};L.append(d);
+    });
+  });
+  renderThread();
+};
+function renderThread(){
+  const T=$('th'),c=contacts.find(x=>x.id===cur);T.textContent='';
+  $('cp').hidden=!c;
+  if(!c){$('who').textContent='';const e=el('div','empty');e.append(el('i','fas fa-comments'));e.append('اختر شخصاً من القائمة لبدء المحادثة');T.append(e);return}
+  $('who').textContent='';$('who').append(c.name+' ',el('small','','· '+ROLE[c.role]+(c.sub?' · '+c.sub:'')));
+  const cv=convo(c.id);
+  if(!cv.length)T.append(el('div','empty','لا توجد رسائل بعد. اكتب أول رسالة 👋'));
+  cv.forEach(m=>{
+    const b=el('div','m'+(m.from===me.id?' me':''),m.message||m.text||'');
+    b.append(el('time','',new Date(ts(m)).toLocaleString('ar-JO',{hour:'2-digit',minute:'2-digit',day:'numeric',month:'short'})));T.append(b);
+    if(m.to===me.id&&m.read===false&&!marked.has(m.id)){marked.add(m.id);updateDoc(doc(db,'messages',m.id),{read:true}).catch(()=>{})}
+  });
+  T.scrollTop=T.scrollHeight;
+}
+window.closeChat=()=>{cur=null;$('main').classList.remove('t');render()};
+
+async function send(){
+  const v=$('tx').value.trim(),c=contacts.find(x=>x.id===cur);
+  if(!v||!c||!ok(c))return;
+  $('send').disabled=true;
+  try{
+    await addDoc(collection(db,'messages'),{from:me.id,to:c.id,message:v,type:'chat',read:false,createdAt:serverTimestamp(),fromName:me.name,fromRole:me.role,toName:c.name});
+    $('tx').value='';
+  }catch(e){alert('تعذّر الإرسال: '+e.message)}
+  $('send').disabled=false;$('tx').focus();
+}
+$('send').onclick=send;
+$('tx').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}};
+
+async function boot(){
+  const out=[];
+  const us=await getDocs(collection(db,'users'));
+  us.forEach(d=>{const v=d.data();if(d.id===me.id||(v.status&&v.status!=='active'))return;
+    out.push({id:d.id,role:v.role,name:v.fullName||v.name||((v.firstName||'')+' '+(v.lastName||'')).trim()||'مستخدم',classes:v.classes||[],sub:v.subject||''})});
+  if(me.role!=='student'){
+    const ss=await getDocs(collection(db,'students'));
+    ss.forEach(d=>{const v=d.data();if(v.status==='banned')return;
+      out.push({id:d.id,role:'student',name:v.name||((v.firstName||'')+' '+(v.lastName||'')).trim()||'طالب',key:key(v),sub:v.grade?'الصف '+key(v):''})});
+  }
+  contacts=out.filter(c=>ROLE[c.role]&&ok(c));
+  [where('from','==',me.id),where('to','==',me.id)].forEach(w=>
+    onSnapshot(query(collection(db,'messages'),w),s=>{s.docs.forEach(d=>msgs.set(d.id,{id:d.id,...d.data()}));render()}));
+  $('me').textContent=me.name+' · '+ROLE[me.role];
+  $('ld').style.display='none';render();
+}
+const bad=()=>location.replace('login.html');
+if(localStorage.getItem('userRole')==='student'){
+  const id=localStorage.getItem('studentId');if(!id)bad();
+  getDoc(doc(db,'students',id)).then(s=>{
+    if(!s.exists()||s.data().status==='banned')return bad();
+    const d=s.data();me={id,role:'student',name:d.name,key:key(d)};boot();
+  }).catch(bad);
+}else{
+  onAuthStateChanged(auth,async u=>{
+    if(!u)return bad();
+    const s=await getDoc(doc(db,'users',u.uid));
+    if(!s.exists()||(s.data().status&&s.data().status!=='active'))return bad();
+    const d=s.data();me={id:u.uid,role:d.role,name:d.fullName||d.name||'مستخدم',classes:d.classes||[]};boot();
+  });
+}
+</script>
+</body>
+</html>

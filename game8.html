@@ -1,0 +1,205 @@
+<script>
+/**
+ * SCILAB 3D - المساعد البرمجي الذكي
+ * تفعيل كافة الأنظمة: المجهر، الكيمياء، الكهرباء، والفلك
+ */
+
+// ══════════════════════════════════════
+// 1. نظام الحالة العامة (State Management)
+// ══════════════════════════════════════
+let currentView = 'overview';
+let sessionStart = Date.now();
+let discoveryCount = 0;
+
+// بيانات المحاكاة
+const samples = [
+    { id: 'cell', name: 'خلية بصل', color: '#86efac', info: 'خلايا نباتية واضحة الجدران.', zoom: 40 },
+    { id: 'blood', name: 'عينة دم', color: '#f87171', info: 'خلايا دم حمراء (كريات).', zoom: 100 },
+    { id: 'bacteria', name: 'بكتيريا', color: '#fbbf24', info: 'كائنات دقيقة وحيدة الخلية.', zoom: 150 }
+];
+
+const chemicals = [
+    { id: 'hcl', name: 'حمض الهيدروكلوريك (HCl)', color: '#f43f5e', ph: 1.0 },
+    { id: 'naoh', name: 'هيدروكسيد الصوديوم (NaOH)', color: '#3b82f6', ph: 13.0 },
+    { id: 'h2o', name: 'ماء مقطر (H₂O)', color: '#0ea5e9', ph: 7.0 }
+];
+
+// ══════════════════════════════════════
+// 2. التهيئة الأولية (Initialization)
+// ══════════════════════════════════════
+window.onload = () => {
+    initHome();
+    initStars();
+    updateSessionTime();
+    
+    // ربط القوائم
+    renderMicroSamples();
+    renderChemReagents();
+};
+
+function initHome() {
+    const stations = [
+        { id: 'micro', name: 'المجهر الإلكتروني', icon: '🔬', color: '#00c8ff', x: 100, y: 150, hint: 'استكشف العالم المجهري' },
+        { id: 'chem', name: 'طاولة الكيمياء', icon: '⚗️', color: '#f43f5e', x: 450, y: 150, hint: 'تفاعلات ومركبات' },
+        { id: 'circuit', name: 'الدوائر الكهربائية', icon: '🔌', color: '#f59e0b', x: 100, y: 320, hint: 'بناء وتحليل الدوائر' },
+        { id: 'tele', name: 'التلسكوب الفلكي', icon: '🔭', color: '#a855f7', x: 450, y: 320, hint: 'رصد النجوم والمجرات' }
+    ];
+
+    const world = document.getElementById('lab-world');
+    stations.forEach(st => {
+        const div = document.createElement('div');
+        div.className = 'station';
+        div.style.left = st.x + 'px';
+        div.style.top = st.y + 'px';
+        div.onclick = () => openTool(st.id);
+        div.innerHTML = `
+            <div class="st-glow" style="color:${st.color}"></div>
+            <div class="st-body" style="border-color:${st.color}44">
+                <div class="st-screen">
+                    <div class="st-icon-wrap"><span class="st-icon">${st.icon}</span></div>
+                    <div class="st-pip" style="background:${st.color}"></div>
+                </div>
+                <div class="st-body-text">
+                    <div class="st-name">${st.name}</div>
+                    <div class="st-hint">${st.hint}</div>
+                </div>
+            </div>
+        `;
+        world.appendChild(div);
+    });
+}
+
+// ══════════════════════════════════════
+// 3. التنقل بين الأدوات (Navigation)
+// ══════════════════════════════════════
+function openTool(id) {
+    document.getElementById('overview').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('overview').style.display = 'none';
+        const view = document.getElementById(`vw-${id}`);
+        if(view) {
+            view.classList.add('active');
+            document.getElementById('bc-sep').style.display = 'inline';
+            document.getElementById('bc-tool').style.display = 'inline';
+            document.getElementById('bc-tool').innerText = id.toUpperCase();
+        }
+    }, 400);
+}
+
+function goHome() {
+    document.querySelectorAll('.tool-view').forEach(v => v.classList.remove('active'));
+    document.getElementById('overview').style.display = 'flex';
+    setTimeout(() => document.getElementById('overview').style.opacity = '1', 50);
+    document.getElementById('bc-sep').style.display = 'none';
+    document.getElementById('bc-tool').style.display = 'none';
+}
+
+// ══════════════════════════════════════
+// 4. محاكاة المجهر (Microscope Engine)
+// ══════════════════════════════════════
+let microZoom = 10;
+const microCanvas = document.getElementById('micro-canvas');
+const mCtx = microCanvas?.getContext('2d');
+
+function renderMicroSamples() {
+    const container = document.getElementById('micro-samples');
+    if(!container) return;
+    samples.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'sample-item';
+        div.style.borderColor = s.color + '44';
+        div.style.color = s.color;
+        div.innerHTML = `<span>●</span> ${s.name}`;
+        div.onclick = () => selectSample(s);
+        container.appendChild(div);
+    });
+}
+
+function selectSample(s) {
+    discoveryCount++;
+    document.getElementById('disc-count').innerText = discoveryCount;
+    document.getElementById('micro-info').innerText = s.info;
+    document.getElementById('micro-obs-log').innerText = `تم تحميل عينة: ${s.name}. جاهز للتحليل.`;
+    setZoom(10);
+    drawMicroPattern(s.color);
+    showNotif(`تم تجهيز عينة ${s.name}`);
+}
+
+function setZoom(val) {
+    microZoom = val;
+    document.getElementById('zoom-badge').innerText = val + 'x';
+    document.getElementById('zoom-sl').value = val;
+    // هنا يمكن إضافة تأثير تكبير بصري للكانفاس
+}
+
+function drawMicroPattern(color) {
+    if(!mCtx) return;
+    mCtx.clearRect(0, 0, 340, 340);
+    mCtx.strokeStyle = color;
+    mCtx.lineWidth = 2;
+    for(let i=0; i<20; i++) {
+        mCtx.beginPath();
+        mCtx.arc(170 + (Math.random()*40-20), 170 + (Math.random()*40-20), Math.random()*100, 0, Math.PI*2);
+        mCtx.stroke();
+    }
+}
+
+// ══════════════════════════════════════
+// 5. محاكاة الكيمياء (Chemistry Engine)
+// ══════════════════════════════════════
+function renderChemReagents() {
+    const container = document.getElementById('chem-reagents');
+    if(!container) return;
+    chemicals.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'reagent-item';
+        div.style.borderColor = c.color + '44';
+        div.style.color = c.color;
+        div.innerHTML = `🧪 ${c.name}`;
+        div.onclick = () => addChemical(c);
+        container.appendChild(div);
+    });
+}
+
+function addChemical(c) {
+    const eq = document.getElementById('chem-eq');
+    eq.innerText = `تفاعل جارٍ: ${c.name} + ...`;
+    document.getElementById('chem-ph-v').innerText = c.ph.toFixed(1);
+    document.getElementById('chem-ph-sl').value = c.ph;
+    showNotif(`تمت إضافة ${c.name} إلى الكأس`);
+}
+
+// ══════════════════════════════════════
+// 6. أدوات مساعدة (Utilities)
+// ══════════════════════════════════════
+function updateSessionTime() {
+    setInterval(() => {
+        const diff = Math.floor((Date.now() - sessionStart) / 1000);
+        const m = Math.floor(diff / 60).toString().padStart(2, '0');
+        const s = (diff % 60).toString().padStart(2, '0');
+        document.getElementById('session-time').innerText = `${m}:${s}`;
+    }, 1000);
+}
+
+function showNotif(msg) {
+    const n = document.getElementById('notif');
+    n.innerText = msg;
+    n.style.display = 'block';
+    setTimeout(() => n.style.display = 'none', 3000);
+}
+
+function initStars() {
+    const c = document.getElementById('stars-canvas');
+    const ctx = c.getContext('2d');
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    for(let i=0; i<150; i++) {
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(Math.random()*c.width, Math.random()*c.height, Math.random()*1.5, 0, Math.PI*2);
+        ctx.fill();
+    }
+}
+</script>
+
+<div id="notif"></div>
